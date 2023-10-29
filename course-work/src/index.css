@@ -1,0 +1,172 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+header svg {
+  font-size: 24px;
+}
+
+/* .ant-form svg {
+  font-size: 14px !important;
+} */
+
+/* .ant-typography svg {
+  font-size: 16px;
+}
+
+.arrow svg {
+    font-size: 16px !important;
+} */
+
+.arrow {
+  font-size: 16px !important;
+}
+
+.icon {
+  vertical-align: bottom;
+}
+
+.ant-table-expanded-row>.ant-table-cell {
+  background: #ffffff !important
+}
+
+.ant-table-wrapper .ant-table-cell .ant-table-container:first-child {
+  border-top: 1px solid #f0f0f0
+}
+
+.ant-table-wrapper .ant-table-cell .ant-table-container:last-child {
+  border-bottom: 1px solid #f0f0f0
+}
+
+.rowCursorPointer .ant-table-tbody >tr >td:hover {
+  cursor: pointer;
+}
+
+.ant-table-expanded-row td {
+  padding-block: 8px !important;
+}
+
+.blockOpening_unactive {
+  display: none;
+  transition: display 0.3s,visibility 0s;
+}
+
+.blockOpening_active {
+  display: block;
+}
+
+.confirmationModal .ant-modal-header {
+  margin-inline: 14px;
+  text-align: center;
+}
+
+.ant-timeline.ant-timeline-label .ant-timeline-item-label {
+  text-align: start;
+  width: calc(6% - 12px) !important;
+}
+
+.ant-timeline .ant-timeline-item-content {
+  inset-inline-start: calc(7% - 12px) !important;
+}
+
+.ant-timeline .ant-timeline-item-tail,
+.ant-timeline-item-head {
+  inset-inline-start: calc(7% - 12px) !important;
+} 
+
+.ant-timeline-item-content>p {
+  margin-block: 0px;
+}
+
+.ant-timeline-item.ant-timeline-item-last {
+  padding-bottom: 0;
+}
+
+.left-button-in-two-buttons {
+  margin-right: 15px;
+}
+
+.give-answer-modal .ant-modal-header {
+  margin-bottom: 18px !important;
+}
+
+.give-answer-modal .ant-modal-title {
+  font-size: 18px !important;
+}
+
+.edit-priority table{
+  border: 1px solid #D6D3D3 !important; 
+  border-radius: 8px 8px 0 0 !important; 
+}
+
+.edit-priority tbody { 
+  box-shadow: inset 0px 0px 10px 0px #EAE6E6 !important; 
+}
+
+.pointer-tr tbody tr {
+  cursor: pointer;
+}
+
+.ant-menu-overflow-item.ant-menu-submenu.ant-menu-submenu-horizontal.ant-menu-submenu-selected {
+  background-color: #001529 !important
+}
+
+.ant-collapse-expand-icon > span[aria-label='filter'] svg {
+  font-size: 16px !important;
+}
+
+.ant-collapse-header {
+  align-items: center;
+}
+
+.collapse-block .ant-collapse-header, .collapse-block .ant-collapse-content-box {
+  padding-inline: 0 !important;
+}
+
+.students-table-filters .ant-form-item {
+  margin-bottom: 0;
+}
+.students-table-filters .ant-form-item-label {
+  padding-bottom: 0;
+  color: #585858;
+}
+
+.administration-collapse .ant-collapse-header-text {
+  font-size: 20px !important;
+  font-weight: 600;
+}
+
+.administration-collapse .ant-collapse-item:first-child {
+  border: 1px solid #d9d9d9 !important;
+  border-bottom: 0px !important;
+  border-radius: 4px 4px 0px 0px !important;
+}
+
+.administration-collapse .ant-collapse-item {
+  border: 1px solid #d9d9d9 !important;
+  border-bottom: 0px !important;
+}
+
+.administration-collapse .ant-collapse-item:last-child {
+  border: 1px solid #d9d9d9 !important;
+  border-radius: 0px 0px 4px 4px  !important;
+}
+
+.form-item-disabled label, .form-item-disabled label::before{
+  color: rgba(0, 0, 0, 0.35) !important;
+}
+
+.collapse-block .ant-collapse-header {
+  padding-block: 0 !important;
+}
+
