@@ -2,21 +2,17 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { 
     selectAreStudentsFetching,
-    selectStudentsWithApplications,
     selectStudentsWithoutApplications,
 } from "../../../store/students/StudentsSelectors";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { getStudentArrays } from "../../../store/students/StudentsReducer";
-import { Button, Col, Collapse, Row, Select, Space, Spin, Table, Tag, TreeSelect, Typography, theme } from "antd";
+import { Space, Spin, Table, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
-// import { ColumnsType, TableProps } from "antd/es/table";
-import { InnerStudentProfileInfoType, StudentWithApplicationsType, StudentWithoutApplicationsType } from "../../../utils/types/types";
+import { InnerStudentProfileInfoType, StudentWithoutApplicationsType } from "../../../utils/types/types";
 import Title from "antd/es/typography/Title";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
-import type { ColumnsType, FilterValue, SorterResult } from "antd/es/table/interface";
-import type { SelectProps, TableProps } from 'antd';
-import { FilterOutlined } from "@ant-design/icons";
+import type { ColumnsType } from "antd/es/table/interface";
 
 const columnsStWithoutApp: ColumnsType<StudentWithoutApplicationsType> = [
     { title: 'ФИО', dataIndex: 'fio', key: 'fio' },

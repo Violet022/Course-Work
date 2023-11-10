@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Card, Layout, Spin } from 'antd';
+import { Card, Spin } from 'antd';
 import Title from 'antd/es/typography/Title';
 import InformationBlock from '../../../components/information/InformationBlock/InformationBlock';
 import { 

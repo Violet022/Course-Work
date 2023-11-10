@@ -1,7 +1,6 @@
-import { Button, Modal,  Space } from 'antd';
-import React, { ReactNode, useState } from 'react';
+import { Button, Modal} from 'antd';
+import { ReactNode, useState } from 'react';
 import { VisibilityContext } from '../../components/contexts/VisibilityContext';
-import { useSelector } from 'react-redux';
 
 type PropsType = {
     buttonText: string,
@@ -17,8 +16,8 @@ const OpenModalWithFormButton = (props: PropsType): JSX.Element => {
         <>
             <Button type="primary" onClick={() => setIsModalOpen(true)}>{props.buttonText}</Button>
             <VisibilityContext.Provider value={{
-                isFormVisible: isModalOpen,
-                toggleSwitcher: toggleButton}}
+                isVisible: isModalOpen,
+                toggleVisibilitySwitcher: toggleButton}}
             >
                 <Modal 
                     title={props.modalTitle} 
@@ -32,7 +31,6 @@ const OpenModalWithFormButton = (props: PropsType): JSX.Element => {
                     {props.form}
                 </Modal>
             </VisibilityContext.Provider>
-            
         </>
     )
 }

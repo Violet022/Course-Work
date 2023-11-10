@@ -16,18 +16,6 @@ header svg {
   font-size: 24px;
 }
 
-/* .ant-form svg {
-  font-size: 14px !important;
-} */
-
-/* .ant-typography svg {
-  font-size: 16px;
-}
-
-.arrow svg {
-    font-size: 16px !important;
-} */
-
 .arrow {
   font-size: 16px !important;
 }
@@ -168,5 +156,17 @@ header svg {
 
 .collapse-block .ant-collapse-header {
   padding-block: 0 !important;
+}
+
+svg.action-icon {
+  color: rgba(0, 0, 0, 0.68) !important
+}
+
+svg.action-icon:hover {
+  color: rgba(64, 150, 255, 1) !important
+}
+
+.pointer:hover {
+  cursor: pointer;
 }
 

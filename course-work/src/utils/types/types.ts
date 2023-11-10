@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react"
-import { JsxElement } from "typescript"
+import { ReactNode } from "react"
+import { AppStateType } from "../../store/store"
 
 // USER SERVICE
 export type CreateUpdateGroupType = {
@@ -14,20 +14,20 @@ export type UserType = {
     firstName: string,
     lastName: string,
     patronym: string | null,
-    role: string,
+    role: UserRoleType,
     email: string,
     groupNumber: string | null,
-    companyId: string | number | null
+    companyId: string | null
 }
 export type CreateUserType = {
-    companyId: string | number | null,
+    companyId: string | null,
     email: string,
     firstName: string,
     groupNumber: string | null,
     lastName: string,
     password: string,
     patronym: string | null,
-    role: string,
+    role: UserRoleType,
 }
 export type UpdateUserType = {
     email: string,
@@ -40,9 +40,12 @@ export type UserSecurityType = {
     password: string,
     role: string
 }
+export type UserRoleType = 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR' | ''
+export type ExtendedUserRoleType = 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR_ATTACHED' | 'CURATOR_NOT_ATTACHED' | ''
 
 // APPLICATION SERVICE
 export type ApplicationType = {
+    companyId: string,
     companyName: string,
     id: string,
     interviews: Array<InterviewType>,
@@ -103,14 +106,6 @@ export type UpdateStudentProfileType = {
     technologies: Array<string>
 }
 
-export type CompanyType = {
-    companyId: number | string,
-    companyName: string,
-    companyDescription: string,
-    companyAddress: string,
-    
-}
-
 // COMPANY SERVICE
 export type CompanyDtoType = {
     address: string | null,
@@ -143,6 +138,7 @@ export type CreateIntershipPositionType = {
     title: string
 }
 export type IntershipPositionDtoType = {
+    companyId: string,
     companyName: string,
     createdAt: string,
     description: string | null,
@@ -159,8 +155,9 @@ export type IntershipPositionDtoType = {
     updatedAt: string,
 }
 export type CreateUpdatePositionType = {
+    companyId: string | null
     description: string | null,
-    languageId: string | number | null,
+    languageId: number | null,
     numberOfPlaces: number | string | null,
     salaryRange: string | null,
     stackId: string | number | null,
@@ -207,7 +204,6 @@ export type CreateUpdateTechnologyType = {
 export type CuratorDtoType = {
     companies: Array<CuratorCompanyType>,
     id: string
-
 }
 export type CuratorCompanyType = {
     id: string,
@@ -217,10 +213,23 @@ export type CuratorType = {
     companies: Array<CuratorCompanyType>,
     id: string
     fio: string
+}
+export type ShortCuratorType = {
+    id: string
+    name: string
+}
 
+export type AdditionalCuratorInfoType = {
+    isAttachedToCompany: boolean,
+    companies: Array<CuratorCompanyType>
 }
 
 // OTHER TYPES
+export type CompanyWithCuratorsType = {
+    id: string,
+    name: string,
+    curators: Array<ShortCuratorType>
+}
 export type InfoBlockItemType = {
     title: string,
     text: string | null
@@ -273,7 +282,8 @@ export type IntershipPositionWithApplicationsType = {
 }
 
 export type ShortStudentApplicationInfo = {
-    id: string,
+    studentId: string,
+    applicationId: string,
     fio: string,
     groupNumber: string,
     statusHistory: Array<StatusHistoryType>

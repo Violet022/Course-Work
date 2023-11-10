@@ -1,4 +1,3 @@
-import type {InferActionsTypes} from '../store';
 import type {ApplicationType, CreateUpdatePositionType, 
     IntershipPositionDtoType,
     LanguageType,
@@ -6,9 +5,12 @@ import type {ApplicationType, CreateUpdatePositionType,
     TechnologyType
 } from '../../utils/types/types';
 import { companyServiceAPI } from '../../api/company-service-api';
-import { getAllCompanyPositions } from '../positions/PositionsReducer';
+import { getAllCompanyPositions, getAllCompanyPositionsWithApplicationsWithStudentInfo, getAllCuratorPositions } from '../positions/PositionsReducer';
 import { applicationServiceAPI } from '../../api/intership-application-service-api';
 import { stackServiceAPI } from '../../api/stack-service-api';
+import { GetStateType } from '../store';
+import { ResultCodesEnum } from '../../api/api';
+import { useNavigate } from 'react-router-dom';
 
 let initialState = {
     positionInfo: {} as IntershipPositionDtoType,
@@ -18,6 +20,7 @@ let initialState = {
     isStudentAppliedAnApplicationFetching: false,
 
     newPositionTemplate: {
+        companyId: null,
         description: '',
         languageId: null,
         numberOfPlaces: null,
@@ -27,6 +30,7 @@ let initialState = {
         title: ''
     } as CreateUpdatePositionType,
     newPosition: {
+        companyId: null,
         description: '',
         languageId: null,
         numberOfPlaces: null,
@@ -37,6 +41,7 @@ let initialState = {
     } as CreateUpdatePositionType,
 
     updatedPositionInfoTemplate: {
+        companyId: null,
         description: '',
         languageId: null,
         numberOfPlaces: null,
@@ -46,6 +51,7 @@ let initialState = {
         title: ''
     } as CreateUpdatePositionType,
     updatedPositionInfo: {
+        companyId: null,
         description: '',
         languageId: null,
         numberOfPlaces: null,
@@ -87,6 +93,7 @@ const positionReducer = (state = initialState, action: any): InitialStateType =>
             return {
                 ...state,
                 newPosition: {
+                    companyId: null,
                     description: '',
                     languageId: null,
                     numberOfPlaces: null,
@@ -110,6 +117,7 @@ const positionReducer = (state = initialState, action: any): InitialStateType =>
             return {
                 ...state,
                 updatedPositionInfo : {
+                    companyId: null,
                     description: '',
                     languageId: null,
                     numberOfPlaces: null,
@@ -217,7 +225,7 @@ const getTechnologiesIdsPromise = (currentTechnologiesVals: Array<string>) => {
 export const getPositionInfo = (positionId: string) => (dispatch: any, getState: any) => {
     const updatedPositionInfoTemplate = getState().position.updatedPositionInfoTemplate
 
-    let languageId: string | number| null = null
+    let languageId: number| null = null
     let stackId: string | number| null = null
     let technologiesIds: Array<number> = []
 
@@ -238,6 +246,7 @@ export const getPositionInfo = (positionId: string) => (dispatch: any, getState:
                 stackId = values[1] === -1 ? null : values[1]
                 technologiesIds = values[2] === -1 ? [] : values[2]
                 dispatch(setUpdatedPositionInfoTemplate({
+                    companyId: data.companyId,
                     description: data.description,
                     languageId: languageId,
                     numberOfPlaces: data.numberOfPlaces,
@@ -254,25 +263,39 @@ export const getPositionInfo = (positionId: string) => (dispatch: any, getState:
         })
 }
 export const createNewPosition = () => (dispatch: any, getState: any) => {
-    const companyId = getState().auth.user.companyId
     const newPosition = getState().position.newPosition
+    const newPositionCompanyId = newPosition.companyId
+    const id = newPositionCompanyId === null ? getState().auth.user.companyId : newPositionCompanyId
     companyServiceAPI.createPosition (
-        companyId, newPosition.description, newPosition.languageId, 
+        id, newPosition.description, newPosition.languageId, 
         newPosition.numberOfPlaces, newPosition.salaryRange, newPosition.stackId, 
         newPosition.title, newPosition.technologiesIds
     )
     .then(() => {
-        dispatch(getAllCompanyPositions(companyId))
+        if(newPositionCompanyId === null)
+            dispatch(getAllCompanyPositions(id))
+        else {
+            if(window.location.pathname === '/positions')
+                dispatch(getAllCuratorPositions())
+            else
+                dispatch(getAllCompanyPositionsWithApplicationsWithStudentInfo(id))
+        }
+            
     })
 }
-export const deletePosition = () => (dispatch: any, getState: any) => {
+
+export const deletePosition = () => (dispatch: any, getState: GetStateType) => {
     const positionId = getState().position.positionInfo.id
-    console.log(positionId)
+    const navigate = useNavigate()
     companyServiceAPI.deletePosition(positionId)
+        .then(response => {
+            navigate('/positions')
+        })
 }
+
 export const updatePositionInfo = () => (dispatch: any, getState: any) => {
     const positionId = getState().position.positionInfo.id
-    const companyId = getState().auth.user.companyId
+    const companyId = getState().position.positionInfo.companyId
     const updatedPosition = getState().position.updatedPositionInfo
     companyServiceAPI.editPosition(
         positionId, companyId, updatedPosition.description, updatedPosition.languageId,
@@ -284,7 +307,7 @@ export const updatePositionInfo = () => (dispatch: any, getState: any) => {
         })
 }
 
-export const findOutIsStudentAppliedAnApplication = (positionId: string) => (dispatch: any, getState: any) => {
+export const findOutIsStudentAppliedAnApplication = (positionId: string) => (dispatch: any, getState: GetStateType) => {
     const studentId = getState().auth.user.userId
     let isApplied = false
     dispatch(setIsStudentAppliedAnApplicationFetching(true))
@@ -297,14 +320,13 @@ export const findOutIsStudentAppliedAnApplication = (positionId: string) => (dis
         })
 }
 
-export const createApplicationForPosition = () => (dispatch: any, getState: any) => {
+export const createApplicationForPosition = () => (dispatch: any, getState: GetStateType) => {
     const positionId = getState().position.positionInfo.id
     applicationServiceAPI.createApplication(positionId)
         .then(data => {
             dispatch(setIsStudentAppliedAnApplication(true))
         })
 }
-
 
 export type InitialStateType = typeof initialState
 

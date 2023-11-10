@@ -12,7 +12,7 @@ const PositionPage: React.FC = () => {
         <Layout style={{ marginInline: 50, marginTop: 30 }}>
             <PositionInfoCard/>
             {
-                (userRole === 'COMPANY' || userRole === 'SCHOOL') &&
+                (userRole !== 'STUDENT') &&
                 <PositionApplicationsCard/>
             }
         </Layout>

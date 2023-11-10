@@ -1,7 +1,7 @@
 import React from "react"
 import { StatusHistoryType } from "../../../utils/types/types"
-import { Col, Row, Space, Tag, Typography } from "antd"
-import { convertShortDate } from "../../../utils/functions/converters"
+import { Space, Tag, Typography } from "antd"
+import { convertShortDate } from "../../../utils/functions/dateHandler"
 
 const {Text} = Typography
 

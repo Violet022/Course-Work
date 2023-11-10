@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Space } from 'antd';
-import type { FormInstance } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -45,8 +44,8 @@ const EditableInformationBlock: React.FC<PropsType> = (props) => {
                     </Space>
                 </div>
                 <VisibilityContext.Provider value={{
-                    isFormVisible : isEditMode,
-                    toggleSwitcher: toggleEditIcon
+                    isVisible : isEditMode,
+                    toggleVisibilitySwitcher: toggleEditIcon
                 }}>
                     {
                         isEditMode

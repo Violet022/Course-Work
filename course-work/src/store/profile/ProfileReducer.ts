@@ -1,16 +1,12 @@
-import { companyServiceAPI } from "../../api/company-service-api";
 import { applicationServiceAPI } from "../../api/intership-application-service-api";
-import { stackServiceAPI } from "../../api/stack-service-api";
 import { userServiceAPI } from "../../api/user-service-api";
 import {
     UserType,
     UpdateUserType,
     CompanyDtoType,
-    CreateUpdateCompanyType,
     AdditionalStudentInformationType,
-    StudentProfileType,
-    InnerStudentProfileInfoType
 } from "../../utils/types/types";
+import { GetStateType } from "../store";
 
 let initialState = {
     profileInfo: {} as UserType,
@@ -23,14 +19,6 @@ let initialState = {
     isProfileInfoFetching: false as boolean,
 
     companyInfo: {} as CompanyDtoType,
-    updatedCompanyInfo: {
-        address: '',
-        contacts: '',
-        description: '',
-        logoURL: '',
-        name: '',
-        websiteURL: ''
-    } as CreateUpdateCompanyType,
     isCompanyInfoFetching: false as boolean,
 
     additionalStudentInfo: {} as AdditionalStudentInformationType,
@@ -41,7 +29,6 @@ let initialState = {
         technologies: []
     } as AdditionalStudentInformationType,
     isAdditionalStudentInfoFetching: false as boolean,
-
 };
 
 const profileReducer = (state = initialState, action: any): InitialStateType => {
@@ -75,23 +62,6 @@ const profileReducer = (state = initialState, action: any): InitialStateType => 
             return {
                 ...state,
                 companyInfo: action.companyInfo
-            };
-        case 'SET_UPDATED_COMPANY_INFO':
-            return {
-                ...state,
-                updatedCompanyInfo: action.updatedCompanyInfo
-            };
-        case 'CLEAR_UPDATED_COMPANY_INFO':
-            return {
-                ...state,
-                updatedCompanyInfo: {
-                    address: '',
-                    contacts: '',
-                    description: '',
-                    logoURL: '',
-                    name: '',
-                    websiteURL: ''
-                }
             };
         case 'SET_IS_COMPANY_INFO_FETCHING':
             return {
@@ -153,14 +123,6 @@ export const setCompanyInfo = (companyInfo: CompanyDtoType) => {
         type: 'SET_COMPANY_INFO',
         companyInfo }
 };
-export const setUpdatedCompanyInfo = (updatedCompanyInfo: CreateUpdateCompanyType) => {
-    return {
-        type: 'SET_UPDATED_COMPANY_INFO',
-        updatedCompanyInfo }
-};
-export const clearUpdatedCompanyInfo = () => {
-    return {type: 'CLEAR_UPDATED_COMPANY_INFO'}
-};
 export const setIsCompanyInfoFetching = (isFetching: boolean) => {
     return {
         type: 'SET_IS_COMPANY_INFO_FETCHING',
@@ -185,7 +147,6 @@ export const setIsAdditionalStudentInfoFetching = (isFetching: boolean) => {
         type: 'SET_IS_ADDITIONAL_STUDENT_INFO_FETCHING',
         isFetching }
 };
-
 
 // THUNKS
 export const getProfileInfo = () => (dispatch: any) => {
@@ -226,7 +187,7 @@ export const getAllStudentInfo = (studentId: string) => (dispatch: any) => {
     })
 
 }
-export const updateProfileInfo = () => (dispatch: any, getState: any) => {
+export const updateProfileInfo = () => (dispatch: any, getState: GetStateType) => {
     const currentProfileInfo = getState().profile.profileInfo
     const updatedProfile = getState().profile.updatedProfileInfo
     userServiceAPI.editUser(
@@ -243,47 +204,6 @@ export const updateProfileInfo = () => (dispatch: any, getState: any) => {
                 patronym: updatedProfileInfo.patronym,
             }))
             dispatch(setIsProfileInfoFetching(false))
-        })
-}
-
-export const getCompanyInfo = (companyId: string | number | null) => (dispatch: any) => {
-    dispatch(setIsCompanyInfoFetching(true))
-    companyServiceAPI.getCompanyById(companyId)
-        .then(data => {
-            dispatch(setCompanyInfo(data))
-            return data
-        })
-        .then(data => {
-            dispatch(setIsCompanyInfoFetching(false))
-            dispatch(setUpdatedCompanyInfo({
-                address: data.address,
-                contacts: data.contacts,
-                description: data.description,
-                logoURL: data.logoURL,
-                name: data.name,
-                websiteURL: data.websiteURL
-            }))
-        })
-}
-export const updateCompanyInfo = () => (dispatch: any, getState: any) => {
-    const companyId = getState().auth.user.companyId
-    const updatedCompany = getState().profile.updatedCompanyInfo
-    companyServiceAPI.editCompany(
-        companyId, updatedCompany.address, updatedCompany.contacts, updatedCompany.description, 
-        updatedCompany.logoURL, updatedCompany.name, updatedCompany.websiteURL)
-        .then((updatedCompanyInfo) => {
-            dispatch(clearUpdatedCompanyInfo())
-            dispatch(setIsCompanyInfoFetching(true))
-            dispatch(setCompanyInfo(updatedCompanyInfo))
-            dispatch(setUpdatedCompanyInfo({
-                address: updatedCompanyInfo.address,
-                contacts: updatedCompanyInfo.contacts,
-                description: updatedCompanyInfo.description,
-                logoURL: updatedCompanyInfo.logoURL,
-                name: updatedCompanyInfo.name,
-                websiteURL: updatedCompanyInfo.websiteURL
-            }))
-            dispatch(setIsCompanyInfoFetching(false))
         })
 }
 
@@ -356,10 +276,14 @@ export const updateAdditionalStudentInfo = () => (dispatch: any, getState: any) 
         .finally(() => {
             updateTechnologies(initialAddStudInf.technologies.map((s: any) => s.id), updatedAddStudInf.technologies, studentId)
             .finally(() => {
-                applicationServiceAPI.addResume(updatedAddStudInf.resume)
-                .then(() => {
+                if (updatedAddStudInf.resume !== null) {
+                    applicationServiceAPI.addResume(updatedAddStudInf.resume)
+                    .then(() => {
+                        dispatch(getAdditionalStudentInfo(studentId))
+                    })
+                }
+                else
                     dispatch(getAdditionalStudentInfo(studentId))
-                })
             })
         })
     })

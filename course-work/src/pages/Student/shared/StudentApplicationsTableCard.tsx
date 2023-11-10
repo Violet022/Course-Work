@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Card, Layout, Space, Spin } from 'antd';
+import { Card, Space} from 'antd';
 import Title from 'antd/es/typography/Title';
-import InformationBlock from '../../../components/information/InformationBlock/InformationBlock';
-import { 
-    selectAdditionalStudentInfo, 
-    selectIsProfileInfoFetching, 
-    selectProfileInfo 
-} from '../../../store/profile/ProfileSelectors';
 import { getAllStudentInfo } from '../../../store/profile/ProfileReducer';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { useParams } from 'react-router-dom';
-import { createAdditionalStudentProfileInfoFieldsArray, createCommonProfileInfoFieldsArray } from '../../../utils/functions/informationBlockFieldsCreators';
 import { selectUserRole } from '../../../store/authentication/AuthSelectors';
 import AllStudentApplicationsTable from '../../../components/tables/Tables/AllStudentApplicationsTable';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import StudentCompanyApplicationsTable from '../../../components/tables/Tables/StudentCompanyApplicationsTable';
+import StudentCuratorCompaniesApplications from '../../../components/tables/Tables/StudentCuratorCompaniesApplications';
 
 const StudentApplicationsTableCard: React.FC = () => {
     const [isTableOpened, setIsTableOpened] = useState(false)
@@ -28,6 +22,7 @@ const StudentApplicationsTableCard: React.FC = () => {
     const getTable = () => {
         if (userRole === 'COMPANY') return <StudentCompanyApplicationsTable/>
         if (userRole === 'SCHOOL') return <AllStudentApplicationsTable/>
+        if (userRole === 'CURATOR') return <StudentCuratorCompaniesApplications/>
     }
     
     React.useEffect(() => {

@@ -1,5 +1,5 @@
-import React, { useContext,useState } from "react";
-import { Space, Spin, Table, Typography} from "antd";
+import React, { Key, useContext,useState } from "react";
+import { Space, Spin, Table} from "antd";
 import { useNavigate } from "react-router-dom";
 import { ColumnsType} from "antd/es/table";
 import { StudentWithApplicationsType} from "../../../../../utils/types/types";
@@ -16,6 +16,7 @@ const StudentsWithApplicationsTable: React.FC = () => {
     const studentsWithApplications = dataTableContext.dataTable
 
     const [isTableOpened, setIsTableOpened] = useState(false)
+    const [totalItems, setTotalItems] = useState(dataTableContext.dataTable.length)
     const navigate = useNavigate()
 
     const columnsStWithApp: ColumnsType<StudentWithApplicationsType> = [
@@ -26,15 +27,15 @@ const StudentsWithApplicationsTable: React.FC = () => {
                 compare: (a, b) => a.fio.localeCompare(b.fio),
                 multiple: 2,
             },
-            onFilter: (value: string | number | boolean, record) => record.fio.includes(String(value)) 
+            onFilter: (value: boolean | Key, record) => record.fio.includes(String(value)) 
         },
         { title: 'Группа', dataIndex: 'groupNumber', key: 'groupNumber',
           filteredValue: filteredInfo.groupNumber || null,
-          onFilter: (value: string | number | boolean, record) => record.groupNumber.includes(String(value))
+            onFilter: (value: boolean | Key, record) => record.groupNumber.includes(String(value))
         },
         { title: 'Приоритет', dataIndex: 'priority', key: 'priority',
             filteredValue: filteredInfo.priority || null,
-            onFilter: (value: string | number | boolean, record) => Number(record.priority) != Number.MAX_SAFE_INTEGER,
+            onFilter: (value: boolean | Key, record) => Number(record.priority) != Number.MAX_SAFE_INTEGER,
             sorter: {
                 compare: (a, b) => Number(a.priority) - Number(b.priority),
                 multiple: 1,
@@ -47,23 +48,23 @@ const StudentsWithApplicationsTable: React.FC = () => {
         },
         { title: 'Позиция', dataIndex: 'position', key: 'position',
           filteredValue: filteredInfo.position || null,
-          onFilter: (value: string | number | boolean, record) => record.position.includes(String(value)) 
+          onFilter: (value: boolean | Key, record) => record.position.includes(String(value)) 
         },
         { title: 'Стек', dataIndex: 'stack', key: 'stack',
           filteredValue: filteredInfo.stack || null,
-          onFilter: (value: string | number | boolean, record) => record.stack.includes(String(value)) 
+          onFilter: (value: boolean | Key, record) => record.stack.includes(String(value)) 
         },
         { title: 'Компания', dataIndex: 'companyName', key: 'companyName',
           filteredValue: filteredInfo.companyName || null,
-          onFilter: (value: string | number | boolean, record) => record.companyName.includes(String(value))
+          onFilter: (value: boolean | Key, record) => record.companyName.includes(String(value))
         },
         { title: 'Статус заявки', dataIndex: 'statusHistory', key: 'statusHistory',
             render: (applicationStatuses) => {
                 return <StatusTag applicationStatuses={applicationStatuses}/>
             },
             filteredValue: filteredInfo.status || null,
-            onFilter: (value: string | number | boolean, record) => 
-                      record.statusHistory[record.statusHistory.length - 1].status.includes(String(value))
+            onFilter: (value: boolean | Key, record) => 
+                record.statusHistory[record.statusHistory.length - 1].status.includes(String(value))
         }, 
     ];
 
@@ -85,10 +86,18 @@ const StudentsWithApplicationsTable: React.FC = () => {
                 {
                     (studentsWithApplications.length !== 0 && isTableOpened) &&
                     <Table
+                        className="pointer-tr"
                         style={{marginBottom: 24}}
                         columns={columnsStWithApp} 
                         dataSource={studentsWithApplications}
-                        pagination={false} 
+                        pagination={{
+                            locale: { items_per_page: ""},
+                            showSizeChanger: true,
+                            defaultPageSize: 10,
+                            defaultCurrent: 1,
+                            total: totalItems,
+                            showTotal: (total, range) => `${range[0]}-${range[1]} из ${total}`,
+                        }}
                         tableLayout="auto"
                         bordered
                         onRow={(record, rowIndex) => {

@@ -30,7 +30,7 @@ const PositionInfoCard: React.FC = () => {
             <Card style={{ margin: 20 }}>
                 <Spin spinning={isFetching}>
                     {
-                        userRole === 'COMPANY'
+                        (userRole === 'COMPANY' || userRole === 'CURATOR') 
                         ? <PositionInfoCardForCompany positionInfo={positionInfo}/>
                         : <PositionInfoCardForStudentAndSchool positionInfo={positionInfo}/>
                     }

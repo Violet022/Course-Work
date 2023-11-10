@@ -1,4 +1,4 @@
-import type {InferActionsTypes} from '../store';
+import type {AppStateType, GetStateType} from '../store';
 import type {
     CreateIntershipPositionType, 
     IntershipPositionDtoType,
@@ -118,7 +118,7 @@ export const getAllPositions = () => (dispatch: any) => {
         })
 }
 
-export const getAllCompanyPositions = (companyId: string | number | null) => (dispatch: any) => {
+export const getAllCompanyPositions = (companyId: string | null) => (dispatch: any) => {
     dispatch(setArePositionsFetching(true))
     companyServiceAPI.getCompanyById(companyId)
         .then(data => {
@@ -126,6 +126,22 @@ export const getAllCompanyPositions = (companyId: string | number | null) => (di
             dispatch(setArePositionsFetching(false))
         })
 
+}
+
+export const getAllCuratorPositions = () => (dispatch: any, getState: GetStateType) => {
+    const curatorCompanyIds = getState().auth.additionalCuratorInfo.companies.map(company => company.id)
+    const curatorCompaniesPositions: Array<IntershipPositionDtoType> = []
+    dispatch(setArePositionsFetching(true))
+    Promise.all(curatorCompanyIds.map(curatorCompanyId => {
+        return companyServiceAPI.getCompanyById(curatorCompanyId)
+            .then(companyInfo => {
+                curatorCompaniesPositions.push(...companyInfo.positions)
+            })
+    }))
+    .then(() => {
+        dispatch(setPositions(curatorCompaniesPositions))
+        dispatch(setArePositionsFetching(false))
+    })
 }
 
 const connectPositionAndApplication = async (positions: any) => {
@@ -138,7 +154,8 @@ const connectPositionAndApplication = async (positions: any) => {
                         return userServiceAPI.getUserById(application.studentId)
                         .then((studentInfo) => {
                             position.applications.push({
-                                id: studentInfo.userId,
+                                studentId: studentInfo.userId,
+                                applicationId: application.id,
                                 fio: `${studentInfo.lastName} ${studentInfo.firstName} ${studentInfo.patronym === null ? '' : studentInfo.patronym}`,
                                 groupNumber: studentInfo.groupNumber,
                                 statusHistory: application.statusHistory
@@ -151,7 +168,7 @@ const connectPositionAndApplication = async (positions: any) => {
 
     return positions;
 }
-export const getAllCompanyPositionsWithApplicationsWithStudentInfo = (companyId: string | number | null) => (dispatch: any) => {
+export const getAllCompanyPositionsWithApplicationsWithStudentInfo = (companyId: string | null) => (dispatch: any) => {
     dispatch(setArePositionsWithApplicationsFetching(true))
     companyServiceAPI.getCompanyById(companyId)
         .then(data => {
@@ -162,20 +179,6 @@ export const getAllCompanyPositionsWithApplicationsWithStudentInfo = (companyId:
             })
         })
 }
-
-// export const createNewCompanyPosition = (newPositionToCreate: IntersipPositionCreationType) => (dispatch: any) => {
-//     companyAPI.createIntershipPosition(
-//         newPositionToCreate.companyId, newPositionToCreate.intershipPositionName, 
-//         newPositionToCreate.intershipPositionDescription, newPositionToCreate.intershipPositionCount)
-//         .then(() => {
-//             dispatch(creatingNewPositionReducerActions.clearNewPositionData())
-//             companyAPI.getCompanyIntershipPositions(newPositionToCreate.companyId)
-//             .then(data => {
-//                 dispatch(positionsReducerActions.setPositions(data.intershipPositions))
-//             })
-//         })
-
-// }
 
 export type InitialStateType = typeof initialState
 

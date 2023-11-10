@@ -19,18 +19,14 @@ const Navbar: React.FC = () => {
     const dispatch = useAppDispatch()
     const location = useLocation()
     const [icon, setIcon] = useState(faRegularUser)
-    // const [current, setCurrent] = useState(location.pathname.split('/')[1])
     const [current, setCurrent] = useState<string>()
     const isAuth = useSelector(selectIsAuth)
     const userRole = useSelector(selectUserRole)
 
-    const logoutBtnClick = () => {
-        dispatch(logout())
-    }
+    const logoutBtnClick = () => { dispatch(logout())}
 
     const onClick: MenuProps['onClick'] = (e) => {
-        if(e.key !== 'notifications')
-            setCurrent(e.key);
+        if(e.key !== 'notifications' && e.key !== 'login') setCurrent(e.key);
         if(e.key === 'profile')
             setIcon(faSolidUser)
         else
@@ -39,9 +35,9 @@ const Navbar: React.FC = () => {
 
     useEffect(() => {
         let loc = location.pathname.split('/')[1]
-        if(loc === 'companies' || loc === 'students' || loc === 'positions' || 'applications' )
+        if(loc !== 'notifications' && loc !== 'login')
             setCurrent(loc);
-      }, [location]);
+    }, [location]);
 
     return (
         <Header style={{ padding: 0 }} >

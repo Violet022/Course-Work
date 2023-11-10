@@ -1,10 +1,7 @@
 import { Avatar, Menu, MenuProps } from "antd";
 import React from "react";
-import { BellOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser as faSolidUser} from "@fortawesome/free-solid-svg-icons";
-import {faUser as faRegularUser} from '@fortawesome/free-regular-svg-icons'
 
 type PropsType = {
     isAuth: boolean,

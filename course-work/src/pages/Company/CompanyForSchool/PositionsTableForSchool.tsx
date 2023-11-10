@@ -4,10 +4,20 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { getAllCompanyPositionsWithApplicationsWithStudentInfo } from "../../../store/positions/PositionsReducer";
 import { selectArePositionsWithApplicationsFetching, selectPositionsWithApplications } from "../../../store/positions/PositionsSelectors";
-import { IntershipPositionWithApplicationsType } from "../../../utils/types/types";
+import { IntershipPositionWithApplicationsType, ShortStudentApplicationInfo } from "../../../utils/types/types";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { useNavigate, useParams } from "react-router-dom";
-import { positionApplicationsTableColumns } from "../../../components/tables/Tables/PositionApplicationsTable";
+import { StatusTag } from "../../../components/tables/TableCellContent/StatusTag";
+
+const positionApplicationsTableColumns: TableColumnsType<ShortStudentApplicationInfo> = [
+    { title: 'ФИО', dataIndex: 'fio', key: 'fio'},
+    { title: 'Группа', dataIndex: 'groupNumber', key: 'groupNumber'},
+    { title: 'Статус заявки', dataIndex: 'statusHistory', key: 'statusHistory',
+          render: (applicationStatuses) => {
+              return <StatusTag applicationStatuses={applicationStatuses}/>
+          }
+      },
+];
 
 const PositionsTableForSchool: React.FC = () => {
     const areFetching = useSelector(selectArePositionsWithApplicationsFetching)
@@ -52,9 +62,9 @@ const PositionsTableForSchool: React.FC = () => {
                                 dataSource={record.applications} 
                                 pagination={false} 
                                 bordered
-                                tableLayout="fixed"
+                                tableLayout="auto"
                                 onRow={(record) => {
-                                    return {onClick: (e) => {navigate(`/students/${record.id}`)}};
+                                    return {onClick: (e) => {navigate(`/students/${record.studentId}`)}};
                                 }}
                             />
                         </div>

@@ -8,10 +8,6 @@ export const selectIsProfileCompanyInfoFetching = (state: AppStateType) => {
     return state.profile.isCompanyInfoFetching
 }
 
-export const selectUpdatedCompanyInfo = (state: AppStateType) => {
-    return state.profile.updatedCompanyInfo
-}
-
 export const selectProfileInfo= (state: AppStateType) => {
     return state.profile.profileInfo
 }

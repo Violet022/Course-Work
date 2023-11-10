@@ -1,15 +1,14 @@
 import React from 'react';
-import {  Col, Form, Input, Row, Select } from 'antd';
+import { Form, Input } from 'antd';
 import { setUpdatedAdditionalStudentInfo, updateAdditionalStudentInfo } from '../../../store/profile/ProfileReducer';
-import { AdditionalStudentInformationType, SelectOptionType, StackAndElementsType} from '../../../utils/types/types';
+import { AdditionalStudentInformationType} from '../../../utils/types/types';
 import { checkIfUndefined } from '../../../utils/functions/checkers';
 import CancelEditButton from '../../../components/information/EditableInformationBlock/EditFormButtons/CancelEditButton';
 import SubmitEditButton from '../../../components/information/EditableInformationBlock/EditFormButtons/SubmitEditButton';
 import { useAppDispatch } from '../../../hooks/hooks';
-import { useSelector } from 'react-redux';
-import { selectAllLanguages, selectAllStacks, selectAllTechnologies, selectIsSLTFetching } from '../../../store/stack/StackSelectors';
-import { getStacksLanguagesAndTechnologies } from '../../../store/stack/StackReducer';
-import { convertSLTArrayToSelectOptionsArray } from '../../../utils/functions/converters';
+import StackMultipleSelectItem from '../../../components/forms/formItems/WithSelects/StackSelect/StackMultipleSelectItem';
+import LanguageMultipleSelectItem from '../../../components/forms/formItems/WithSelects/LanguageSelect/LanguageMultipleSelectItem';
+import TechnologyMultipleSelectItem from '../../../components/forms/formItems/WithSelects/TechnologyMultipleSelectItem';
 
 type PropsType = {
     initialValues:  AdditionalStudentInformationType
@@ -19,25 +18,15 @@ const UpdateAdditionalStudentInfoForm: React.FC<PropsType> = (props) => {
     const dispatch = useAppDispatch()
     const additionalStudentInfo = props.initialValues
 
-    const isSLTFetching = useSelector(selectIsSLTFetching)
-    const stacks = useSelector(selectAllStacks)
-    const languages = useSelector(selectAllLanguages)
-    const technologies = useSelector(selectAllTechnologies)
-
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
-    
-    React.useEffect(() => {
-        dispatch(getStacksLanguagesAndTechnologies())
-    }, [])
 
     React.useEffect(() => {
         if(!!values){
-            console.log(values)
             dispatch(setUpdatedAdditionalStudentInfo({
                 languages: checkIfUndefined(values.languages),
                 stacks: checkIfUndefined(values.stacks),
-                resume: checkIfUndefined(values.resume),
+                resume: values.resume === undefined ? null : values.resume,
                 technologies: checkIfUndefined(values.technologies),
             }))
         };
@@ -45,50 +34,17 @@ const UpdateAdditionalStudentInfoForm: React.FC<PropsType> = (props) => {
 
     return (
         <>
-            { isSLTFetching
-            ? 
-                null
-            :
             <Form form={form} 
                 name="validateOnly" 
                 layout="vertical" 
                 autoComplete="off"
                 style={{maxWidth: 900}}
             >
-                <Form.Item name="stacks" label="Предпочитаемые стеки"
-                        rules={[{ required: true, message: 'Выберите один или более стек' }]}
-                        initialValue={additionalStudentInfo.stacks?.map(val => val.id)}
-                >
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: '100%' }}
-                        placeholder="Выберите стек(и)"
-                        options={convertSLTArrayToSelectOptionsArray(stacks)}
-                    />
-                </Form.Item>
-                <Form.Item name="languages" label="Изученные языки"
-                           initialValue={additionalStudentInfo.languages?.map(val => val.id)}
-                >
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: '100%' }}
-                        placeholder="Выберите язык(и)"
-                        options={convertSLTArrayToSelectOptionsArray(languages)}
-                    />
-                </Form.Item>
-                <Form.Item name="technologies" label="Изученные инструменты"
-                           initialValue={additionalStudentInfo.technologies?.map(val => val.id)}
-                >
-                    <Select
-                        mode="multiple"
-                        allowClear
-                        style={{ width: '100%' }}
-                        placeholder="Выберите один или более изученный инструмент"
-                        options={convertSLTArrayToSelectOptionsArray(technologies)}
-                    />
-                </Form.Item>
+                <StackMultipleSelectItem initialValue={additionalStudentInfo.stacks?.map(val => val.id)}/>
+                <LanguageMultipleSelectItem initialValue={additionalStudentInfo.languages?.map(val => val.id)}/>
+                <TechnologyMultipleSelectItem formItemLabel='Изученные инструменты' formItemName='technologies' 
+                    initialValues={additionalStudentInfo.technologies?.map(val => val.id)} placeholder='Выберите один или более изученный инструмент'
+                />
                 <Form.Item name="resume" label="Ссылка на резюме"
                         initialValue={additionalStudentInfo.resume} 
                 >
@@ -101,7 +57,6 @@ const UpdateAdditionalStudentInfoForm: React.FC<PropsType> = (props) => {
                     <CancelEditButton/>
                 </Form.Item>
             </Form>
-            }
         </>
     )
 }

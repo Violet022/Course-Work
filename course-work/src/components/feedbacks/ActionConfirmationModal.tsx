@@ -1,5 +1,6 @@
 import { Button, Modal } from 'antd';
 import React from 'react';
+import { useAppDispatch } from '../../hooks/hooks';
 
 type PropsType = {
     innerText: string,
@@ -10,8 +11,8 @@ type PropsType = {
 
 const ActionConfirmationModal: React.FC<PropsType> = (props) => {
     const onSubmit = ()=> {
-        props.onSubmitBtnClick()
         props.setIsModalOpen(false)
+        props.onSubmitBtnClick()
     }
 
     return (

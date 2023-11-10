@@ -1,12 +1,11 @@
-import { Button, Col, Form, Input, Row, Select, Spin} from 'antd';
-import React, { useCallback, useContext, useState } from 'react';
+import { Button, Col, Form, Input, Row} from 'antd';
+import React, { useContext, useState } from 'react';
 import { VisibilityContext } from '../../../components/contexts/VisibilityContext';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { checkIfUndefined } from '../../../utils/functions/checkers';
 import { createNewUser, setNewUser } from '../../../store/administration/AdministrationReducer';
-import { CompanyDtoType, GroupType, SelectOptionType } from '../../../utils/types/types';
-import { companyServiceAPI } from '../../../api/company-service-api';
-import { userServiceAPI } from '../../../api/user-service-api';
+import AllCompaniesSelect from '../../../components/dataProviders/Selects/AllCompaniesSelect';
+import AllGroupsSelect from '../../../components/dataProviders/Selects/AllGroupsSelect';
 
 type PropsType = {
     userRole: 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR'
@@ -15,20 +14,16 @@ type PropsType = {
 const CreateUserForm: React.FC<PropsType> = (props) => {
     const visibilityContext = useContext(VisibilityContext)
     const [submittable, setSubmittable] = useState(false);
-    const [ options, setOptions ] = useState<Array<SelectOptionType>>([]);
-    const [ areOptionsFetching, setAreOptionsFetching ] = useState(false);
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
     const dispatch = useAppDispatch()
 
     const onReset = () => {
-        setOptions([])
         form.resetFields();
     };
     const onSubmit = () => {
-        visibilityContext.toggleSwitcher()
+        visibilityContext.toggleVisibilitySwitcher()
         dispatch(createNewUser())
-        setOptions([])
         form.resetFields();
     }
     React.useEffect(() => {
@@ -53,41 +48,10 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
         });
     }, [values]);
 
-    const getGroupsSelectOptions = useCallback( async () => {
-        const groups = await userServiceAPI.getAllGroups()
-        setOptions(groups.map((group: GroupType) => {
-            return {
-                value: group.groupNumber,
-                label: group.groupNumber
-            }
-        }))
-    }, []);
-
-    const getCompaniesSelectOptions = useCallback( async () => {
-        const companies = await companyServiceAPI.getAllCompanies()
-        setOptions(companies.map((company: CompanyDtoType) => {
-            return {
-                value: company.id,
-                label: company.name
-            }
-        }))
-    }, []);
-
-    const onSelectClick = (open: boolean) => {
-        // if (open === true && options.length === 0) {
-        if (open === true) {
-            setAreOptionsFetching(true)
-            if (props.userRole === 'STUDENT')
-                getGroupsSelectOptions().then(() => setAreOptionsFetching(false))
-            else if (props.userRole === 'COMPANY')
-                getCompaniesSelectOptions().then(() => setAreOptionsFetching(false))
-        }
-    }
-
     return (
         <>
             <Form form={form} 
-                name="validateOnly" 
+                name="createUserForm" 
                 layout="vertical" 
                 autoComplete="off"
             >
@@ -120,15 +84,7 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
                                 className={`form-item-${props.userRole !== 'COMPANY' ? 'disabled' : 'not-disables'}`}
                                 rules={[{ required: props.userRole === 'COMPANY', message: 'Выберите компанию' }]}
                         >
-                            <Select
-                                allowClear
-                                disabled={props.userRole !== 'COMPANY'}
-                                placeholder="Выберите компанию"
-                                defaultValue={null}
-                                notFoundContent={areOptionsFetching ? <Spin size="small" /> : null}
-                                options={options}
-                                onDropdownVisibleChange={(e) => {onSelectClick(e)}}
-                            />
+                            <AllCompaniesSelect isDisabled={props.userRole !== 'COMPANY'}/>
                         </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -136,15 +92,7 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
                                 className={`form-item-${props.userRole !== 'STUDENT' ? 'disabled' : 'not-disables'}`}
                                 rules={[{ required: props.userRole === 'STUDENT', message: 'Выберите группу' }]}
                         >
-                            <Select
-                                allowClear
-                                disabled={props.userRole !== 'STUDENT'}
-                                placeholder="Выберите группу"
-                                defaultValue={null}
-                                notFoundContent={areOptionsFetching ? <Spin size="small" /> : null}
-                                options={options}
-                                onDropdownVisibleChange={(e) => {onSelectClick(e)}}
-                            />
+                            <AllGroupsSelect isDisabled={props.userRole !== 'STUDENT'}/>
                         </Form.Item>
                     </Col>
                 </Row>

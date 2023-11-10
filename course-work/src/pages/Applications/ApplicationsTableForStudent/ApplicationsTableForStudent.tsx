@@ -1,13 +1,12 @@
 import { Spin, Table, TableColumnsType } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
-import { ApplicationType, StatusHistoryType } from "../../../utils/types/types";
+import { ApplicationType } from "../../../utils/types/types";
 import { selectApplications, selectAreApplicationsFetching } from "../../../store/applications/ApplicationsSelectors";
 import { useAppDispatch } from "../../../hooks/hooks";
-import { getCompanyApplications, getStudentApplications } from "../../../store/applications/ApplicationsReducer";
+import { getStudentApplications } from "../../../store/applications/ApplicationsReducer";
 import { useNavigate } from "react-router-dom";
 import { StatusTag } from "../../../components/tables/TableCellContent/StatusTag";
-
 
 const ApplicationsTableForStudent: React.FC = () => {
     const areFetching = useSelector(selectAreApplicationsFetching)
@@ -29,7 +28,6 @@ const ApplicationsTableForStudent: React.FC = () => {
         },
     ];
 
-  
     return (
       <>
         <Spin spinning={areFetching}>

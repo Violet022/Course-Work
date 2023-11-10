@@ -1,12 +1,11 @@
-import { companyServiceAPI } from "../../api/company-service-api";
 import { applicationServiceAPI } from "../../api/intership-application-service-api";
-import { stackServiceAPI } from "../../api/stack-service-api";
 import { userServiceAPI } from "../../api/user-service-api";
 import {
     ApplicationType,
     CreateUpdateInterviewType,
     StudentApplicationInfoType
 } from "../../utils/types/types";
+import { GetStateType } from "../store";
 
 let initialState = {
     applicationInfo: {} as ApplicationType,
@@ -18,7 +17,6 @@ let initialState = {
     newInterviewTemplate : {
         date: '',
         location: ''
-
     } as CreateUpdateInterviewType,
     newInterview: {
         date: '',
@@ -120,8 +118,7 @@ export const getApplicationAndStudentInfo = (applicationId: string) => (dispatch
     })
 }
 
-
-export const acceptOrRejectOffer = (action: 'OFFER_ACCEPTED' | 'OFFER_REJECTED') => (dispatch: any, getState: any) => {
+export const acceptOrRejectOffer = (action: 'OFFER_ACCEPTED' | 'OFFER_REJECTED') => (dispatch: any, getState: GetStateType) => {
     const applicationId = getState().application.applicationInfo.id
     applicationServiceAPI.addStatusToApplication(applicationId, action)
         .then(updatedApplication => {
@@ -129,7 +126,7 @@ export const acceptOrRejectOffer = (action: 'OFFER_ACCEPTED' | 'OFFER_REJECTED')
         })
 }
 
-export const giveAnswerToStudentAfterInterview = (action: 'OFFER_ISSUED' | 'REJECTED') => (dispatch: any, getState: any) => {
+export const giveAnswerToStudentAfterInterview = (action: 'OFFER_ISSUED' | 'REJECTED') => (dispatch: any, getState:  GetStateType) => {
     const applicationId = getState().application.applicationInfo.id
     applicationServiceAPI.addStatusToApplication(applicationId, action)
         .then((response) => {
@@ -143,7 +140,7 @@ export const giveAnswerToStudentAfterInterview = (action: 'OFFER_ISSUED' | 'REJE
         })
 }
 
-export const sheduleAnInterview = () =>(dispatch: any, getState: any) => {
+export const sheduleAnInterview = () =>(dispatch: any, getState: GetStateType) => {
     const applicationId = getState().application.applicationInfo.id
     const interview = getState().application.newInterview
     applicationServiceAPI.createApplicationInterview(applicationId, interview.date, interview.location)

@@ -1,8 +1,13 @@
-import { UserType } from '../../utils/types/types'
+import { UserType, AdditionalCuratorInfoType } from '../../utils/types/types'
 import { userServiceAPI } from '../../api/user-service-api';
+import { curatorServiceAPI } from '../../api/curator-service-api';
 
 let initialState = {
     user: {} as UserType, 
+    additionalCuratorInfo: {
+        isAttachedToCompany: false as boolean,
+        companies: []
+    } as AdditionalCuratorInfoType,
     isAuth: false,
     loginFormData: {
         email: '' as string ,
@@ -19,6 +24,11 @@ const authReducer = (state = initialState, action: any): InitialStateType => {
             return {
                 ...state,
                 user: action.user
+            }
+        case 'SET_ADDITIONAL_CURATOR_INFO':
+            return {
+                ...state,
+                additionalCuratorInfo: action.additionalCuratorInfo
             }
         case 'SET_IS_AUTH':
             return {
@@ -63,6 +73,11 @@ export const setUserData = (user: UserType) => {
         type: 'SET_USER_DATA',
         user }
 };
+export const setAdditionalCuratorInfo = (additionalCuratorInfo: AdditionalCuratorInfoType) => {
+    return {
+        type: 'SET_ADDITIONAL_CURATOR_INFO',
+        additionalCuratorInfo }
+};
 export const setIsAuth = (isAuth: boolean) => {
     return {
         type: 'SET_IS_AUTH',
@@ -91,15 +106,6 @@ export const setIsUserTryingToLogin = (isTryingToLogin: boolean) => {
     return { type: 'SET_IS_USER_TRYING_TO_LOGIN', isTryingToLogin}
 };
 
-export const getUserDataByTokenWhileInitializing = () => async (dispatch: any) => {
-    dispatch(setIsAuth(false))
-    dispatch(setIsAuthSuccess(false))
-    let userData = await userServiceAPI.getUserByToken()
-    dispatch(setUserData(userData))
-    dispatch(setIsAuth(true))
-    dispatch(setIsAuthSuccess(true))
-}
-
 export const login = (loginData: LoginDataFormType) => (dispatch: any) => {
     dispatch(setIsAuth(false))
     dispatch(setIsAuthSuccess(false))
@@ -114,9 +120,25 @@ export const login = (loginData: LoginDataFormType) => (dispatch: any) => {
             userServiceAPI.getUserByEmail(loginData.email)
                 .then(userData => {
                     dispatch(setUserData(userData))
-                    dispatch(setIsUserTryingToLogin(false))
-                    dispatch(setIsAuth(true))
-                    dispatch(setIsAuthSuccess(true))
+                    if (userData.role === 'CURATOR') {
+                        curatorServiceAPI.getCuratorById(userData.userId)
+                            .then((data) => {
+                                if(data.companies.length !== 0) {
+                                    dispatch(setAdditionalCuratorInfo({
+                                        isAttachedToCompany: true,
+                                        companies: data.companies
+                                    }))
+                                }
+                                dispatch(setIsUserTryingToLogin(false))
+                                dispatch(setIsAuth(true))
+                                dispatch(setIsAuthSuccess(true))
+                            })
+                    }
+                    else {
+                        dispatch(setIsUserTryingToLogin(false))
+                        dispatch(setIsAuth(true))
+                        dispatch(setIsAuthSuccess(true))
+                    }
                 })
         })
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Button, Card, Collapse, Layout, Space} from "antd";
+import { Card, Collapse, Layout, Space} from "antd";
 import Title from "antd/es/typography/Title";
 import OpenModalWithFormButton from "../../components/buttons/OpenModalWithFormButton";
 import CreateStudentGroupForm from "./forms/CreateStudentGroupForm";

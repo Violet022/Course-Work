@@ -1,23 +1,14 @@
-import { Button, Col, DatePicker, DatePickerProps, Form, Input, Row, Select, TimePicker} from 'antd';
-import React, { useContext, useState } from 'react';
-import { useSelector } from 'react-redux';
-import TextArea from 'antd/es/input/TextArea';
-import { getStacksLanguagesAndTechnologies } from '../../store/stack/StackReducer';
-import { 
-    selectAllLanguages,
-    selectAllStacks, 
-    selectAllTechnologies, 
-    selectIsSLTFetching } from '../../store/stack/StackSelectors';
-import { convertSLTArrayToSelectOptionsArray } from '../../utils/functions/converters';
+import { Button, Col, DatePicker, Form, Input, Row, TimePicker} from 'antd';
+import React, { useContext} from 'react';
 import { useAppDispatch } from '../../hooks/hooks';
-import { CreateUpdateInterviewType, CreateUpdatePositionType } from '../../utils/types/types';
+import { CreateUpdateInterviewType} from '../../utils/types/types';
 import { checkIfUndefined } from '../../utils/functions/checkers';
 import { VisibilityContext } from '../contexts/VisibilityContext';
-import { setUpdatedPositionInfo, updatePositionInfo } from '../../store/position/PositionReducer';
 import { setNewInterview, sheduleAnInterview } from '../../store/application/ApplicationReducer';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import { getUTCDateTimeFromDateAndTime_ISO } from '../../utils/functions/dateHandler';
 
 dayjs.extend(utc)
 dayjs.extend(updateLocale)
@@ -29,18 +20,6 @@ type PropsType = {
     initialValues:  CreateUpdateInterviewType,
     onChangeValues: (interview : CreateUpdateInterviewType) => void,
     onSubmit: () => void 
-}
-
-const getUTCInterviewDate = (date: Dayjs, time: Dayjs) => {
-    let dateTimeForm = dayjs()
-                       .set('year', date.year())
-                       .set('month', date.month())
-                       .set('date', date.date())
-                       .set('hour', time.hour())
-                       .set('minute', time.minute())
-                       .set('second', 0)
-    let dateTimeFormWithUTC = dateTimeForm.utc().toISOString()
-    return dateTimeFormWithUTC
 }
 
 const CreateUpdateInterviewForm: React.FC<PropsType> = (props) => {
@@ -57,7 +36,7 @@ const CreateUpdateInterviewForm: React.FC<PropsType> = (props) => {
         form.resetFields();
     };
     const onSubmit = () => {
-        visibilityContext.toggleSwitcher()
+        visibilityContext.toggleVisibilitySwitcher()
         dispatch(props.onSubmit())
         form.resetFields();
     }
@@ -71,7 +50,7 @@ const CreateUpdateInterviewForm: React.FC<PropsType> = (props) => {
             if(!!values){
                 let date: string = ''
                 if(!!values.date && !!values.time) {
-                    date = getUTCInterviewDate(values.date, values.time)  
+                    date = getUTCDateTimeFromDateAndTime_ISO(values.date, values.time)  
                 }
                 dispatch(props.onChangeValues({
                     date: date,
@@ -93,7 +72,7 @@ const CreateUpdateInterviewForm: React.FC<PropsType> = (props) => {
                     <Col style={{width: "49%"}}>
                         <Form.Item name="date" label="Дата"
                             rules={[{ required: true, message: 'Выберите дату собеседования'},
-                                    ({ getFieldValue }) => ({
+                                    () => ({
                                         validator(_, value) {
                                             if (!value || value.valueOf() + 86400000 >= dayjs().valueOf()) {
                                                 return Promise.resolve()
@@ -102,19 +81,16 @@ const CreateUpdateInterviewForm: React.FC<PropsType> = (props) => {
                                         },
                                     }),
                             ]}
-                            // initialValue={interviewData.date}
                         >
                             <DatePicker placeholder="Выберите дату собеседования"        
                                     format={'DD.MM.YYYY'}
                                     style={{width: "100%"}}
                             />
-
                         </Form.Item>
                     </Col>
                     <Col style={{width: "49%"}}>
                         <Form.Item name="time" label="Время"
                             rules={[{ required: true, message: 'Выберите время собеседования' }]}
-                            // initialValue={positionData.languageId}
                         >
                             <TimePicker placeholder="Выберите время собеседования"
                                 format={'HH:mm'}

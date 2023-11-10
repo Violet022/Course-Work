@@ -1,13 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Card, Layout} from "antd";
 import Title from "antd/es/typography/Title";
-import { selectUserRole } from "../../store/authentication/AuthSelectors";
 import StudentsForSchoolContainer from "./StudentsForSchool/StudentsForSchoolContainer";
 import StudentsForCompanyContainer from "./StudentsForCompany/StudentsForCompanyContainer";
+import StudentsWithApplications from "./StudentsForSchool/StudentsWithApplications";
+import { useRole } from "../../hooks/hooks";
 
 const StudentsPage: React.FC = () => {
-    const userRole = useSelector(selectUserRole)
+    const userRole = useRole()
 
     return (
         <>
@@ -16,11 +16,11 @@ const StudentsPage: React.FC = () => {
                     <Title level={3} style={{ marginTop: 0, marginBottom: 24}}>
                         Студенты
                     </Title>
-                    {
-                        userRole === 'SCHOOL'
-                        ? <StudentsForSchoolContainer/>
-                        : <StudentsForCompanyContainer/>
+                    {userRole === 'COMPANY' && <StudentsForCompanyContainer/>}
+                    {(userRole === 'SCHOOL' || userRole === 'CURATOR_NOT_ATTACHED') 
+                        && <StudentsForSchoolContainer/>
                     }
+                    {userRole === 'CURATOR_ATTACHED' && <StudentsWithApplications/>}
                 </Card>
             </Layout>
         </>

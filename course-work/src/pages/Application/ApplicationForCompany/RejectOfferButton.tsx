@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react"
 import ActionConfirmationModal from "../../../components/feedbacks/ActionConfirmationModal";
-import { acceptOrRejectOffer, giveAnswerToStudentAfterInterview } from "../../../store/application/ApplicationReducer";
+import { giveAnswerToStudentAfterInterview } from "../../../store/application/ApplicationReducer";
 import { useAppDispatch } from "../../../hooks/hooks";
 
 const RejectOfferButton: React.FC = () => {
@@ -18,7 +18,6 @@ const RejectOfferButton: React.FC = () => {
                 isModalOpen={isModalOpen}
                 setIsModalOpen={setIsModalOpen}
                 onSubmitBtnClick={() => dispatch(giveAnswerToStudentAfterInterview('REJECTED'))}
-                
             />
         </>
     )

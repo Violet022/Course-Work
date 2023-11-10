@@ -9,9 +9,9 @@ import { getUpdatePositionForm } from '../../../components/forms/CreateUpdatePos
 import { Space } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { useAppDispatch } from '../../../hooks/hooks';
 import ActionConfirmationModal from '../../../components/feedbacks/ActionConfirmationModal';
-import { deletePosition } from '../../../store/position/PositionReducer';
+import { companyServiceAPI } from '../../../api/company-service-api';
+import { useNavigate } from 'react-router-dom';
 
 type PropsType = {
     positionInfo: IntershipPositionDtoType
@@ -20,11 +20,13 @@ type PropsType = {
 const PositionInfoCardForCompany: React.FC<PropsType> = (props) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const updatedPositionInfoTemp: CreateUpdatePositionType= useSelector(selectUpdatedPositionInfoTemplate)
-    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
 
     const DeletePosition = () => {
-        dispatch(deletePosition())
-        setIsModalOpen(false);
+        companyServiceAPI.deletePosition(props.positionInfo.id)
+        .then(response => {
+            navigate('/positions')
+        })
     }
 
     return (
@@ -53,7 +55,7 @@ const PositionInfoCardForCompany: React.FC<PropsType> = (props) => {
             <ActionConfirmationModal
                 innerText={`Удалить позицию`}
                 isModalOpen={isModalOpen}
-                setIsModalOpen={setIsModalOpen}
+                setIsModalOpen={(isOpen: boolean) => setIsModalOpen(isOpen)}
                 onSubmitBtnClick={DeletePosition}
             />
         </>

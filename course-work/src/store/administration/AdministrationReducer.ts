@@ -1,16 +1,7 @@
-import type {InferActionsTypes} from '../store';
-import type {ApplicationType, CreateUpdateCompanyType, CreateUpdateGroupType, CreateUpdatePositionType, 
-    CreateUserType, 
-    IntershipPositionDtoType,
-    LanguageType,
-    StackType,
-    TechnologyType
-} from '../../utils/types/types';
-import { companyServiceAPI } from '../../api/company-service-api';
-import { getAllCompanyPositions } from '../positions/PositionsReducer';
-import { applicationServiceAPI } from '../../api/intership-application-service-api';
-import { stackServiceAPI } from '../../api/stack-service-api';
+import type {CreateUpdateCompanyType, CreateUserType} from '../../utils/types/types';
 import { userServiceAPI } from '../../api/user-service-api';
+import { getAllCurators } from '../curators/CuratorsReducer';
+import { GetStateType } from '../store';
 
 let initialState = {
     newUserTemplate: {
@@ -32,25 +23,7 @@ let initialState = {
         password: '',
         patronym: '',
         role: ''
-    } as CreateUserType,
-
-    newCompanyTemplate: {
-        address: '',
-        contacts: '',
-        description: '',
-        logoURL: '',
-        name: '',
-        websiteURL: ''
-    } as CreateUpdateCompanyType,
-    newCompany: {
-        address: '',
-        contacts: '',
-        description: '',
-        logoURL: '',
-        name: '',
-        websiteURL: ''
-    } as CreateUpdateCompanyType,
-
+    } as CreateUserType
 }
 
 const administrationReducer = (state = initialState, action: any): InitialStateType => {
@@ -74,11 +47,6 @@ const administrationReducer = (state = initialState, action: any): InitialStateT
                     role: ''
                 }
             };
-        case 'SET_NEW_COMPANY':
-            return {
-                ...state,
-                newCompany: action.newCompany
-            };
         default:
             return state;
     }
@@ -94,22 +62,18 @@ export const setNewUser = (newUser: CreateUserType) => {
 export const clearNewUser = () => {
     return {type: 'CLEAR_NEW_USER'}
 }
-export const setNewCompany = (newCompany: CreateUpdateCompanyType) => {
-    return {
-        type: 'SET_NEW_COMPANY',
-        newCompany
-    }
-}
 
 // THUNKS
-export const createNewUser = () => (dispatch: any, getState: any) => {
+export const createNewUser = () => (dispatch: any, getState: GetStateType) => {
     const newUser = getState().administration.newUser
     userServiceAPI.createUser(newUser.companyId, newUser.email, newUser.firstName, newUser.groupNumber, 
         newUser.lastName, newUser.password, newUser.patronym, newUser.role)
-        .then(() => dispatch(clearNewUser()))
+        .then(() => {
+            if(newUser.role === 'CURATOR')
+                dispatch(getAllCurators())
+            dispatch(clearNewUser())
+        })
 }
-
-
 
 export type InitialStateType = typeof initialState
 

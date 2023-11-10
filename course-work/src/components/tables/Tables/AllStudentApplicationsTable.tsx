@@ -1,7 +1,7 @@
 import { Table, TableColumnsType } from "antd";
 import React from "react";
-import { StatusHistoryType, ApplicationTypeWithStudentInfo, ShortStudentApplicationInfo, ApplicationType } from "../../../utils/types/types";
-import { useNavigate, useParams} from "react-router-dom";
+import { ApplicationType } from "../../../utils/types/types";
+import { useParams} from "react-router-dom";
 import { StatusTag } from "../TableCellContent/StatusTag";
 import { useSelector } from "react-redux";
 import { selectApplications, selectAreApplicationsFetching } from "../../../store/applications/ApplicationsSelectors";

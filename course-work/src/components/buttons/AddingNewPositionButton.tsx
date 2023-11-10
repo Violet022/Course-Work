@@ -1,10 +1,10 @@
 import { Button, Modal,  Space } from 'antd';
 import React, { useState } from 'react';
-import { VisibilityContext } from '../../../components/contexts/VisibilityContext';
-import CreateUpdatePositionForm from '../../../components/forms/CreateUpdatePositionForm';
-import { createNewPosition, setNewPosition } from '../../../store/position/PositionReducer';
+import { VisibilityContext } from '../contexts/VisibilityContext';
+import CreateUpdatePositionForm from '../forms/CreateUpdatePositionForm';
+import { createNewPosition, setNewPosition } from '../../store/position/PositionReducer';
 import { useSelector } from 'react-redux';
-import { selectNewPositionTemplate } from '../../../store/position/PositionSelectors';
+import { selectNewPositionTemplate } from '../../store/position/PositionSelectors';
 
 const AddingNewPositionButton: React.FC = () => {
     const newPosition = useSelector(selectNewPositionTemplate)
@@ -17,8 +17,8 @@ const AddingNewPositionButton: React.FC = () => {
                  <Button type="primary" onClick={() => setIsModalOpen(true)}>Добавить новую позицию</Button>
             </Space>
             <VisibilityContext.Provider value={{
-                isFormVisible: isModalOpen,
-                toggleSwitcher: toggleButton}}
+                isVisible: isModalOpen,
+                toggleVisibilitySwitcher: toggleButton}}
             >
                 <Modal 
                     title="Создание новой позиции" 
@@ -36,7 +36,6 @@ const AddingNewPositionButton: React.FC = () => {
                     />
                 </Modal>
             </VisibilityContext.Provider>
-            
         </>
     )
 }

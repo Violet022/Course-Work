@@ -1,10 +1,7 @@
 import { Button, Modal,  Space } from 'antd';
 import React, { useState } from 'react';
 import { VisibilityContext } from '../../../components/contexts/VisibilityContext';
-import CreateUpdatePositionForm from '../../../components/forms/CreateUpdatePositionForm';
-import { createNewPosition, setNewPosition } from '../../../store/position/PositionReducer';
 import { useSelector } from 'react-redux';
-import { selectNewPositionTemplate } from '../../../store/position/PositionSelectors';
 import { selectNewInterviewTemplate } from '../../../store/application/ApplicationSelectors';
 import CreateUpdateInterviewForm from '../../../components/forms/CreateUpdateInterviewForm';
 import { setNewInterview, sheduleAnInterview } from '../../../store/application/ApplicationReducer';
@@ -20,8 +17,8 @@ const CreatingInterviewButton: React.FC = () => {
                  <Button type="primary" onClick={() => setIsModalOpen(true)}>Назначить собеседование</Button>
             </Space>
             <VisibilityContext.Provider value={{
-                isFormVisible: isModalOpen,
-                toggleSwitcher: toggleButton}}
+                isVisible: isModalOpen,
+                toggleVisibilitySwitcher: toggleButton}}
             >
                 <Modal 
                     title="Назначение собеседования" 

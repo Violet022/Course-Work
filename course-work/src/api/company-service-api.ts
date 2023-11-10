@@ -33,7 +33,6 @@ export const companyServiceAPI = {
             name: name,
             websiteURL: websiteURL
         }
-        console.log(body)
         return instanceWithAuth.post(`companies`, body)
             .then(response => {
                 if(response.status === ResultCodesEnum.OK) {
@@ -41,7 +40,7 @@ export const companyServiceAPI = {
                 }
             })
     },
-    getCompanyById(companyId: string | number | null) {
+    getCompanyById(companyId: string | null) {
         return instanceWithAuth.get(`companies/${companyId}`)
             .then(response => {
                 if(response.status === ResultCodesEnum.OK) {
@@ -49,7 +48,7 @@ export const companyServiceAPI = {
                 }
             })
     },
-    editCompany(companyId: string, address: string | null, contacts: string | null, description: string | null,
+    editCompany(companyId: string | null, address: string | null, contacts: string | null, description: string | null,
         logoURL: string | null, name: string, websiteURL: string | null) {
         const body = {
             address: address,
@@ -92,7 +91,6 @@ export const companyServiceAPI = {
             technologiesIds: technologiesIds,
             title: title
         }
-        console.log(body)
         return instanceWithAuth.post(`positions`, body)
     },
     getPositionById(positionId: string) {
@@ -103,7 +101,7 @@ export const companyServiceAPI = {
                 }
             })
     },
-    editPosition(positionId: string, companyId: string, description: string | null, languageId: string | null, 
+    editPosition(positionId: string, companyId: string | null, description: string | null, languageId: string | null, 
         numberOfPlaces: number | null, salaryRange: string | null, stackId: string | null, 
         title: string | null, technologiesIds: Array<number>) {
         const body = {
@@ -126,7 +124,7 @@ export const companyServiceAPI = {
     deletePosition(positionId: string) {
         return instanceWithAuth.delete(`positions/${positionId}`)
     },
-    getPositionsByCompanyId(companyId: string) {
+    getPositionsByCompanyId(companyId: string | null) {
         return instanceWithAuth.get(`positions/byCompany/${companyId}`)
             .then(response => {
                 if(response.status === ResultCodesEnum.OK) {

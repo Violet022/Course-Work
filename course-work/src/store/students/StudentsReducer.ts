@@ -8,6 +8,7 @@ import {
     StudentProfileType,
     ApplicationType
 } from "../../utils/types/types";
+import { AppStateType, GetStateType } from "../store";
 
 let initialState = {
     studentsWithApplicationsArray: [] as Array<StudentWithApplicationsType>,
@@ -140,7 +141,51 @@ export const getStudentArrays = () => (dispatch: any) => {
         })
 }
 
-export const getCompanyStudents = () => (dispatch: any, getState: any) => {
+export const getCuratorCompaniesStudents = () => (dispatch: any, getState: GetStateType) => {
+    const curatorCompanyIds = getState().auth.additionalCuratorInfo.companies.map(company => company.id)
+    console.log(curatorCompanyIds)
+    dispatch(setAreStudentsFetching(true))
+    let studentsWith: Array<StudentWithApplicationsType> = []
+
+    Promise.all(curatorCompanyIds.map(curatorCompanyId => {
+        return applicationServiceAPI.getStudentsByCompanyId(curatorCompanyId)
+        .then((studentProfiles: Array<StudentProfileType>) => {
+            studentProfiles.map((studentProfile: StudentProfileType) => {
+                console.log(studentProfile.applications)
+                let studentCurrentCompanyApplications = studentProfile.applications.filter(application => curatorCompanyIds.indexOf(application.companyId) !== -1)
+                console.log(studentCurrentCompanyApplications)
+                userServiceAPI.getUserById(studentProfile.id)
+                    .then((student: UserType) => {
+                        Promise.all(studentCurrentCompanyApplications.map(studentCurrentCompanyApplication => {
+                            return applicationServiceAPI.getApplicationById(studentCurrentCompanyApplication.id)
+                            .then(application => {
+                                companyServiceAPI.getPositionById(application.positionId)
+                                .then(position => {
+                                    studentsWith.push({
+                                        id: studentProfile.id,
+                                        fio: `${student.lastName} ${student.firstName} ${student.patronym === null ? '' : student.patronym}`,
+                                        groupNumber: String(student.groupNumber),
+                                        position: application.position,
+                                        priority: application.priority === 0 ? Number.MAX_SAFE_INTEGER : application.priority,
+                                        companyName: application.companyName,
+                                        statusHistory: application.statusHistory,
+                                        stack: position.stack
+                                    })
+                                })
+                            })
+                        }))
+                    })
+
+            })
+        })
+    }))
+    .then(() => {
+        dispatch(setStudentsWithApplications(studentsWith))
+        dispatch(setAreStudentsFetching(false))
+    })
+}
+
+export const getCompanyStudents = () => (dispatch: any, getState: GetStateType) => {
     const companyId = getState().auth.user.companyId
     dispatch(setAreStudentsFetching(true))
 

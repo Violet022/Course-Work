@@ -1,43 +1,28 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Avatar, Card, Col, Collapse, Divider, Layout, List, Row, Space, Spin, Typography } from "antd";
+import { useParams } from "react-router-dom";
+import { Card, Col, Layout, Row, Space, Spin} from "antd";
 import Title from "antd/es/typography/Title";
 import InformationBlock from "../../components/information/InformationBlock/InformationBlock";
 import { selectUserRole } from "../../store/authentication/AuthSelectors";
 import PositionsTableForStudent from "./CompanyForStudent/PositionsTableForStudent";
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faChevronUp, faGlobe } from "@fortawesome/free-solid-svg-icons";
 import PositionsTableForSchool from "./CompanyForSchool/PositionsTableForSchool";
 import { selectCompanyInfo, selectIsCompanyInfoFetching } from "../../store/company/CompanySelectors";
-import { CompanyDtoType, InfoBlockItemType } from "../../utils/types/types";
+import { CompanyDtoType} from "../../utils/types/types";
 import { getCompanyInfo } from "../../store/company/CompanyReducer";
 import { useAppDispatch } from "../../hooks/hooks";
 import { Image } from 'antd';
-
-const { Text, Link } = Typography;
-
-const createCompanyInfoFieldsArray = (companyInfo: CompanyDtoType) => {
-    let companyInfoFieldsArray: Array<InfoBlockItemType>
-    const keys = Object.keys(companyInfo)
-    
-    if (keys.length === 0)
-        companyInfoFieldsArray = []
-    else {
-        companyInfoFieldsArray = [
-            {title: 'Сайт', text: companyInfo.websiteURL },
-            {title: 'Описание', text: companyInfo.description },
-            {title: 'Контакты', text: companyInfo.contacts },
-            {title: 'Адрес', text: companyInfo.address },
-        ]
-    }
-    return companyInfoFieldsArray
-}
+import EditableInformationBlock from "../../components/information/EditableInformationBlock/EditableInformationBlock";
+import { getUpdateCompanyInfoForm } from "../../components/forms/CreateUpdateCompanyInfoForm";
+import PositionsTableForCurator from "./CompanyForCurator/PositionsTableForCurator";
+import { createCompanyInfoFieldsArray } from "../../utils/functions/informationBlockFieldsCreators";
+import AddingNewPositionButton from "../../components/buttons/AddingNewPositionButton";
 
 const CompanyPage: React.FC = () => {
     const isFetching = useSelector(selectIsCompanyInfoFetching)
-    const [isTableOpened, setIsTableOpened] = useState(false)
+    const [isTableOpened, setIsTableOpened] = useState(true)
     const dispatch = useAppDispatch()
     const params = useParams()
     const companyId = params.id == undefined ? "" : params.id 
@@ -51,6 +36,7 @@ const CompanyPage: React.FC = () => {
     const getTable = () => {
         if (userRole === 'STUDENT') return <PositionsTableForStudent/>
         if (userRole === 'SCHOOL') return <PositionsTableForSchool/>
+        if (userRole === 'CURATOR') return <PositionsTableForCurator/>
     }
 
     const imageSrc = useMemo(() => {
@@ -93,8 +79,19 @@ const CompanyPage: React.FC = () => {
                                     }
                                 </Col>
                             </Row>
-                        </div> 
-                        <InformationBlock fields={createCompanyInfoFieldsArray(companyInfo)} colWidths={[3, 21]}/>
+                        </div>
+                        {
+                            userRole === 'CURATOR'
+                            ?  <EditableInformationBlock 
+                                    title='Информация о компании'
+                                    infoBlockdata={companyInfo}
+                                    initialFormValues={companyInfo}
+                                    createInformationBlockFieldsArray={createCompanyInfoFieldsArray}
+                                    getForm={getUpdateCompanyInfoForm}
+                                    colWidths={[3, 21]}
+                              />
+                            : <InformationBlock fields={createCompanyInfoFieldsArray(companyInfo)} colWidths={[3, 21]}/>
+                        } 
                     </Spin>
                 </Card>
                 <Card style={{ margin: 20 }}>
@@ -115,7 +112,7 @@ const CompanyPage: React.FC = () => {
                         {
                             isTableOpened && getTable()
                         }
-                       
+                        {userRole === 'CURATOR' && <AddingNewPositionButton/>}
                     </Spin>
                 </Card>
             </Layout>

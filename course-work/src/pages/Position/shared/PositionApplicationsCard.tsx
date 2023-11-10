@@ -9,9 +9,10 @@ import PositionApplicationsTable from '../../../components/tables/Tables/Positio
 import { selectApplicationsWithStudentInfo, selectAreApplicationsFetching } from '../../../store/applications/ApplicationsSelectors';
 import { ApplicationTypeWithStudentInfo } from '../../../utils/types/types';
 import { useAppDispatch } from '../../../hooks/hooks';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getPositionApplications } from '../../../store/applications/ApplicationsReducer';
 import DndPositionApplicationsTable from '../PositionForCompany/DndPositionApplicationsTable';
+import TitleWithSubtitle from '../../../components/information/Titles/TitleWithSubtitle';
 
 const PositionApplicationsCard: React.FC = () => {
     const [isTableOpened, setIsTableOpened] = useState(false)
@@ -19,7 +20,6 @@ const PositionApplicationsCard: React.FC = () => {
     const areFetching = useSelector(selectAreApplicationsFetching)
     const positionApplications: Array<ApplicationTypeWithStudentInfo> = useSelector(selectApplicationsWithStudentInfo)
     const dispatch = useAppDispatch()
-    const navigate = useNavigate()
     const params = useParams()
     const positionId = params.id == undefined ? "" : params.id 
 
@@ -32,6 +32,7 @@ const PositionApplicationsCard: React.FC = () => {
             <Card style={{ margin: 20 }}>
                 <Row justify="start" align="middle" style={{marginBottom: 12 }} onClick={() => {setIsTableOpened(prev => !prev)}}>
                     <Col style={{ cursor: 'pointer'}}>
+                        {/* <TitleWithSubtitle titlesLevels={[5,5]} title='Студенты, подавшие заявку' subTitle='* в порядке приоритетности для компании'/> */}
                         <Title level={5} style={{ marginBlock: 0}}>
                             Студенты, подавшие заявку
                         </Title>
@@ -52,7 +53,8 @@ const PositionApplicationsCard: React.FC = () => {
                                                                     areFetching={areFetching}
                                                                 /> 
                 }
-                {  (isTableOpened && userRole === 'COMPANY') && <DndPositionApplicationsTable 
+                {  (isTableOpened && (userRole === 'COMPANY' || userRole === 'CURATOR')) 
+                                                            && <DndPositionApplicationsTable 
                                                                     positionApplications={positionApplications} 
                                                                     areFetching={areFetching}
                                                                 /> 

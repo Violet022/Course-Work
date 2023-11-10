@@ -1,15 +1,14 @@
 import { Table, TableColumnsType } from "antd";
 import React from "react";
-import { StatusHistoryType, ApplicationTypeWithStudentInfo, ShortStudentApplicationInfo, ApplicationType } from "../../../utils/types/types";
+import { ApplicationTypeWithStudentInfo } from "../../../utils/types/types";
 import { useNavigate, useParams} from "react-router-dom";
 import { StatusTag } from "../TableCellContent/StatusTag";
 import { useSelector } from "react-redux";
-import { selectApplications, selectApplicationsWithStudentInfo, selectAreApplicationsFetching } from "../../../store/applications/ApplicationsSelectors";
+import { selectApplicationsWithStudentInfo, selectAreApplicationsFetching } from "../../../store/applications/ApplicationsSelectors";
 import { useAppDispatch } from "../../../hooks/hooks";
-import { getStudentApplications, getStudentCompanyApplications } from "../../../store/applications/ApplicationsReducer";
+import { getStudentCompanyApplications } from "../../../store/applications/ApplicationsReducer";
 
 export const studentCompanyApplicationsTableColumns: TableColumnsType<ApplicationTypeWithStudentInfo> = [
-    // { title: 'ФИО', dataIndex: 'fio', key: 'fio'},
     { title: 'Позиция', dataIndex: 'position', key: 'position'},
     { title: 'Статус заявки', dataIndex: 'statusHistory', key: 'statusHistory',
           render: (applicationStatuses) => {

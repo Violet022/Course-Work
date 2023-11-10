@@ -7,21 +7,19 @@ import { initializeApp } from './store/app/AppReducer';
 import MainLayout from './pages/MainLayout';
 
 const App: React.FC = () => {
-  const initialized = useSelector((state: AppStateType) => state.app.initialized)
+    const initialized = useSelector((state: AppStateType) => state.app.initialized)
 
-  const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch()
 
-  useEffect(() => {
-    dispatch(initializeApp())
-  }, [])
+    useEffect(() => {
+      dispatch(initializeApp())
+    }, [])
 
-  return (
-    <>
-      {
-        initialized && <MainLayout/>
-      }
-    </>
-  );
+    return (
+      <>
+        { initialized && <MainLayout/>}
+      </>
+    );
 }
 
 export default App;

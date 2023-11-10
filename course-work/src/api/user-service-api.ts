@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ResultCodesEnum } from "./api";
+import { UserRoleType } from "../utils/types/types";
 
 const instanceWithoutAuth = axios.create({
     baseURL: 'http://localhost:8080/user-service/api/',
@@ -82,7 +83,7 @@ export const userServiceAPI = {
                     }
             })
     },
-    editUser(userId: string, email: string, firstName: string, lastName: string, patronym: string) {
+    editUser(userId: string, email: string, firstName: string, lastName: string, patronym: string | null | undefined) {
         const body = {
             email: email,
             firstName: firstName,
@@ -112,7 +113,7 @@ export const userServiceAPI = {
                     }
             })
     },
-    getUserByRole(role: 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR') {
+    getUserByRole(role: UserRoleType) {
         return instanceWithAuth.get(`users/roles/${role}`)
             .then(response => {
                 if (response.status === ResultCodesEnum.OK) {
@@ -130,7 +131,7 @@ export const userServiceAPI = {
     },
     createUser(companyId: string | null, email: string, firstName: string, 
         groupNumber: string | null, lastName: string | null, 
-        password: string | null, patronym: string | null, role: 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR') {
+        password: string | null, patronym: string | null, role: UserRoleType) {
         const body = {
             companyId: companyId,
             email: email,

@@ -1,6 +1,6 @@
 import React from "react"
 
 export const VisibilityContext = React.createContext({
-    isFormVisible: false,
-    toggleSwitcher: () => {}
+    isVisible: false,
+    toggleVisibilitySwitcher: (isVisible?: boolean) => {}
 })

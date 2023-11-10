@@ -1,4 +1,4 @@
-import { Space, Spin, Table, TableColumnsType, Tag, Typography } from "antd";
+import {  Spin, Table, TableColumnsType } from "antd";
 import React from "react";
 import { useSelector } from "react-redux";
 import { ApplicationTypeWithStudentInfo} from "../../../utils/types/types";
@@ -7,8 +7,6 @@ import { useAppDispatch } from "../../../hooks/hooks";
 import { getCompanyApplications} from "../../../store/applications/ApplicationsReducer";
 import { useNavigate } from "react-router-dom";
 import { StatusTag } from "../../../components/tables/TableCellContent/StatusTag";
-
-const { Text, Link } = Typography;
 
 const ApplicationsTableForCompany: React.FC = () => {
     const areFetching = useSelector(selectAreApplicationsFetching)
@@ -24,9 +22,9 @@ const ApplicationsTableForCompany: React.FC = () => {
       { title: 'ФИО', dataIndex: 'fio', key: 'fio' },
       { title: 'Позиция', dataIndex: 'position', key: 'position' },
       { title: 'Статус заявки', dataIndex: 'statusHistory', key: 'statusHistory',
-                render: (applicationStatuses) => {
-                    return <StatusTag applicationStatuses={applicationStatuses}/>
-                } 
+            render: (applicationStatuses) => {
+                return <StatusTag applicationStatuses={applicationStatuses}/>
+            } 
       },
     ];
 
@@ -42,9 +40,7 @@ const ApplicationsTableForCompany: React.FC = () => {
                 pagination={false}
                 onRow={(record) => {
                     return {
-                        onClick: (e) => {
-                            navigate(`/applications/${record.id}`)
-                        }
+                        onClick: (e) => { navigate(`/applications/${record.id}`)}
                     };
                 }}
             />

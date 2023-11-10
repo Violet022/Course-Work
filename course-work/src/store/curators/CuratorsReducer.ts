@@ -1,9 +1,8 @@
 import type {
     CuratorDtoType,
-    CuratorType
+    CuratorType,
+    ShortCuratorType
 } from '../../utils/types/types';
-import { companyServiceAPI } from '../../api/company-service-api';
-import { applicationServiceAPI } from '../../api/intership-application-service-api';
 import { userServiceAPI } from '../../api/user-service-api';
 import { curatorServiceAPI } from '../../api/curator-service-api';
 
@@ -62,6 +61,41 @@ export const getAllCurators = () => (dispatch: any) => {
                 dispatch(setCurators(curatorsWithFio))
                 dispatch(setAreCuratorsFetching(false))
             })
+        })
+}
+
+export const getAllCuratorsShortInfo = async () => {
+    let curatorsWithFio: Array<ShortCuratorType> = []
+    await curatorServiceAPI.getAllCurators()
+        .then((curators: Array<CuratorDtoType>) => {
+            return Promise.all(curators.map((curator: CuratorDtoType) => {
+                return userServiceAPI.getUserById(curator.id)
+                    .then((user) => {
+                        curatorsWithFio.push({
+                            id: curator.id,
+                            name: `${user.lastName} ${user.firstName} ${user.patronym === null ? '' : user.patronym}`
+                        })
+                    })
+            }))
+        })
+    return curatorsWithFio
+}
+
+export const addCompanyToCurator = (curatorId: string, companyIds: Array<string>) => (dispatch: any) => {
+    if(companyIds.length !== 0) {
+        Promise.all(companyIds.map((companyId: string) => {
+            return curatorServiceAPI.addACompanyToCurator(curatorId, companyId)
+        }))
+        .then(() => {
+            dispatch(getAllCurators())
+        })
+    }
+}
+
+export const removeCompanyFromCurator = (curatorId: string, companyId: string) => (dispatch: any) => {
+    curatorServiceAPI.removeACompanyFromCurator(curatorId, companyId)
+        .then(() => {
+            dispatch(getAllCurators())
         })
 }
 

@@ -16,7 +16,7 @@ const CreateStudentGroupForm: React.FC = () => {
         form.resetFields();
     };
     const onSubmit = () => {
-        visibilityContext.toggleSwitcher()
+        visibilityContext.toggleVisibilitySwitcher()
         dispatch(createNewGroup())
         form.resetFields();
     }
@@ -41,7 +41,6 @@ const CreateStudentGroupForm: React.FC = () => {
                 name="validateOnly" 
                 layout="vertical" 
                 autoComplete="off"
-                // style={{maxWidth: 900}}
             >
                 <Form.Item name="groupNumber" label="Номер группы" 
                     rules={[{ required: true, message: 'Введите номер группы' }]}

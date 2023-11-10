@@ -116,7 +116,7 @@ export const createApplicationStudentInfoFieldsArray = (applicationStudentInfo: 
     else {
         fieldsArray = [
             {title: 'Навыки студента', text: [...getSLTNamesArray(applicationStudentInfo.languages), 
-                                     ...getSLTNamesArray(applicationStudentInfo.technologies)].join(', ') },
+                                              ...getSLTNamesArray(applicationStudentInfo.technologies)].join(', ') },
             {title: 'Резюме студента', text: applicationStudentInfo.resume },
         ]
     }

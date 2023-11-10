@@ -6,7 +6,6 @@ import { List, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../hooks/hooks';
 
-
 const StudentsForCompanyContainer: React.FC = () => {
     const companyStudents = useSelector(selectCompanyStudents)
     const areFetching = useSelector(selectAreStudentsFetching)

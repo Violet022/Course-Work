@@ -1,6 +1,6 @@
 import React from 'react';
 import {  Col, Form, Input, Row } from 'antd';
-import { setUpdatedCompanyInfo, updateCompanyInfo} from '../../store/profile/ProfileReducer';
+import { setUpdatedCompanyInfo, updateCompanyInfo} from '../../store/company/CompanyReducer';
 import { CompanyDtoType, CreateUpdateCompanyType} from '../../utils/types/types';
 import { checkIfUndefined } from '../../utils/functions/checkers';
 import CancelEditButton from '../information/EditableInformationBlock/EditFormButtons/CancelEditButton';
@@ -8,6 +8,7 @@ import SubmitEditButton from '../information/EditableInformationBlock/EditFormBu
 import { useAppDispatch } from '../../hooks/hooks';
 import TextArea from 'antd/es/input/TextArea';
 import { createNewCompany, setNewCompany } from '../../store/company/CompanyReducer';
+import EmailInputItem from './formItems/WithInputs/EmailInputItem';
 
 type PropsType = {
     initialValues:  CompanyDtoType | CreateUpdateCompanyType
@@ -74,12 +75,9 @@ const CreateUpdateCompanyInfoForm: React.FC<PropsType> = (props) => {
                         </Form.Item>
                     </Col>
                     <Col style={{width: "49%"}}>
-                        <Form.Item name="contacts" label="Электронная почта"
-                            rules={[{ pattern: new RegExp('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'), message: 'Введите корректный email'}]} 
-                            initialValue={companyInfo.contacts}
-                        >
-                            <Input placeholder="Введите электронную почту"/>
-                        </Form.Item>
+                        <EmailInputItem formItemName='contacts' 
+                            initialValue={companyInfo.contacts === null ? undefined : companyInfo.contacts}
+                        />
                     </Col>
                 </Row>
                 <Form.Item>

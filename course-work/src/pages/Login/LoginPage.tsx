@@ -1,4 +1,4 @@
-import { Spin } from "antd";
+import { Layout, Spin } from "antd";
 import React from "react";
 import { 
     selectIsAuthSuccess, 
@@ -14,18 +14,20 @@ const LoginPage: React.FC = () => {
    
     return (
         <>
-              {
-                isAuthSuccess
-                ?   <NavigationAfterLogin/>
-                : 
-                    <>
-                        <Spin spinning={isUserTryingToLogin}
-                              tip='Выполняется вход...'
-                        >
-                            <LoginForm/> 
-                        </Spin>
-                    </>
-              }
+            <Layout style={{ marginInline: 50, marginTop: 50 }}>
+                {
+                    isAuthSuccess
+                    ?   <NavigationAfterLogin/>
+                    : 
+                        <>
+                            <Spin spinning={isUserTryingToLogin}
+                                tip='Выполняется вход...'
+                            >
+                                <LoginForm/> 
+                            </Spin>
+                        </>
+                }
+            </Layout>
         </>
     )
 }

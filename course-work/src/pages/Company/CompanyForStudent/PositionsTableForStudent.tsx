@@ -1,21 +1,12 @@
-import { Collapse, Space, Table } from "antd";
-import Column from "antd/es/table/Column";
-import React, { useState } from "react";
+import { Table } from "antd";
+import React from "react";
 import { useSelector } from "react-redux";
 import { selectCompanyPositions } from "../../../store/company/CompanySelectors";
 import { ColumnsType } from "antd/es/table";
 import { useNavigate } from "react-router-dom";
-import Title from "antd/es/typography/Title";
-
-
-interface DataType {
-    id: string
-    title: string;
-    stack: string | null;
-    numberOfPlaces: number | string | null;
-}
+import { IntershipPositionDtoType } from "../../../utils/types/types";
   
-const columns: ColumnsType<DataType> = [
+const columns: ColumnsType<IntershipPositionDtoType> = [
     { title: 'Позиция', dataIndex: 'title', key: 'title' },
     { title: 'Стек', dataIndex: 'stack', key: 'stack',
         render: (stackName) => {

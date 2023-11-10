@@ -1,4 +1,6 @@
-import { getUserDataByTokenWhileInitializing } from '../authentication/AuthReducer';
+import { curatorServiceAPI } from '../../api/curator-service-api';
+import { userServiceAPI } from '../../api/user-service-api';
+import { setAdditionalCuratorInfo, setIsAuth, setIsAuthSuccess, setUserData } from '../authentication/AuthReducer';
 import {InferActionsTypes} from '../store';
 
 let initialState = {
@@ -26,15 +28,36 @@ export const initializeApp = () => (dispatch: any) => {
         localStorage.setItem('token', '')
     
     if (localStorage.getItem('token') !== '') {
-        let promise = dispatch(getUserDataByTokenWhileInitializing());
+        dispatch(setIsAuth(false))
+        dispatch(setIsAuthSuccess(false))
 
-        Promise.all([promise])
-            .then(() => {
-                dispatch(actions.initializedSuccess());
+        userServiceAPI.getUserByToken()
+            .then((userData) => {
+                dispatch(setUserData(userData))
+                if (userData.role === 'CURATOR') {
+                    curatorServiceAPI.getCuratorById(userData.userId)
+                        .then((curatorData) => {
+                            if(curatorData.companies.length !== 0) {
+                                dispatch(setAdditionalCuratorInfo({
+                                    isAttachedToCompany: true,
+                                    companies: curatorData.companies
+                                }))
+                            }
+                            dispatch(setIsAuthSuccess(true))
+                            dispatch(setIsAuth(true))
+                            dispatch(actions.initializedSuccess());
+                        })
+                }
+                else {
+                    dispatch(setIsAuthSuccess(true))
+                    dispatch(setIsAuth(true))
+                    dispatch(actions.initializedSuccess());
+                }
             });
     }
-    else 
+    else {
         dispatch(actions.initializedSuccess())
+    }
 }
 
 export type InitialStateType = typeof initialState

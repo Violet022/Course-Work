@@ -1,10 +1,5 @@
-import { Button, Modal,  Space, Timeline } from 'antd';
-import React, { useState } from 'react';
-import { VisibilityContext } from '../../../components/contexts/VisibilityContext';
-import CreateUpdatePositionForm from '../../../components/forms/CreateUpdatePositionForm';
-import { createNewPosition, setNewPosition } from '../../../store/position/PositionReducer';
-import { useSelector } from 'react-redux';
-import { selectNewPositionTemplate } from '../../../store/position/PositionSelectors';
+import { Timeline } from 'antd';
+import React from 'react';
 import { convertStatusHistoryToTimelineItems } from '../../../utils/functions/converters';
 import { ApplicationType } from '../../../utils/types/types';
 

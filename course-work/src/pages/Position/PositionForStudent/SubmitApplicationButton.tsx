@@ -1,4 +1,4 @@
-import { Button, Modal, Space, Spin, Typography } from 'antd';
+import { Button, Space, Spin, Typography } from 'antd';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { 
@@ -16,7 +16,6 @@ type PropsType = {
 }
 
 const SubmitApplicationButton: React.FC<PropsType> = (props) => {
-    const positionName = useSelector(selectPositionName)
     const isApplicationApplied = useSelector(selectIsStudentAppliedAnApplication)
     const isFetching = useSelector(selectIsStudentAppliedAnApplicationFetching)
     const dispatch = useAppDispatch()

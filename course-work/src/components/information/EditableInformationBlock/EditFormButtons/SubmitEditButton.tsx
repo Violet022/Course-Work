@@ -17,7 +17,7 @@ const SubmitEditButton:React.FC<PropsType> = (props) => {
 
     const updateInfo = () => {
         dispatch(props.updateInfo())
-        visibilityContext.toggleSwitcher()
+        visibilityContext.toggleVisibilitySwitcher()
     }
   
     React.useEffect(() => {

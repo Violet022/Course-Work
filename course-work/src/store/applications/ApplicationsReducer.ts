@@ -2,6 +2,7 @@ import type {ApplicationPriorityType, ApplicationType, ApplicationTypeWithStuden
 import { applicationServiceAPI } from '../../api/intership-application-service-api';
 import { userServiceAPI } from '../../api/user-service-api';
 import { companyServiceAPI } from '../../api/company-service-api';
+import { AppStateType, GetStateType } from '../store';
 
 let initialState = {
     applications: [] as Array<ApplicationType>,
@@ -64,13 +65,23 @@ const connectApplicationAndStudent = async (applications: any) => {
     return applications;
 }
 
-export const getStudentApplications = (id: string = 'none') => (dispatch: any, getState: any) => {
+export const getStudentApplications = (id: string = 'none') => (dispatch: any, getState: GetStateType) => {
     let studentId = id === 'none' ? getState().auth.user.userId : id
     dispatch(setAreApplicationsFetching(true))
     
     applicationServiceAPI.getStudentProfileById(studentId)
         .then(data => {
             dispatch(setApplications(data.applications))
+            dispatch(setAreApplicationsFetching(false))
+        })
+}
+export const getStudentCuratorCompaniesApplications = (studentId: string) => (dispatch: any, getState: GetStateType) => {
+    const curatorCompaniesIds = getState().auth.additionalCuratorInfo.companies.map(company => company.id)
+
+    dispatch(setAreApplicationsFetching(true))
+    applicationServiceAPI.getStudentProfileById(studentId)
+        .then(data => {
+            dispatch(setApplications(data.applications.filter((application: ApplicationType) => curatorCompaniesIds.indexOf(application.companyId) !== -1)))
             dispatch(setAreApplicationsFetching(false))
         })
 }
@@ -88,33 +99,54 @@ export const getPositionApplications = (positionId: string) => (dispatch: any) =
         })
 }
 
-export const getCompanyApplications = () => (dispatch: any, getState: any) => {
+const getCompanyApplicationsWithStudentInfoByCompanyId = (companyId: string | null) => {
+    return companyServiceAPI.getCompanyById(companyId)
+        .then(companyInfo => {
+            return companyInfo.positions.map((companyPosition: IntershipPositionDtoType) => companyPosition.id)
+        })
+        .then(async (companyPositionsIds) => {
+            let companyApplications: Array<ApplicationType> = []
+            await Promise.all(companyPositionsIds.map((companyPositionId: string) => {
+                return applicationServiceAPI.getAllApplicationsByPositionId(companyPositionId)
+                        .then(data => companyApplications = [...companyApplications, ...data])
+            }))
+            return companyApplications
+        })
+        .then(async companyApplications => {
+            let applicationsWithStudentData = await connectApplicationAndStudent(companyApplications)
+            return applicationsWithStudentData
+        })
+}
+
+export const getCompanyApplications = () => (dispatch: any, getState: GetStateType) => {
     const companyId = getState().auth.user.companyId
     dispatch(setAreApplicationsFetching(true))
-    companyServiceAPI.getCompanyById(companyId)
-    .then(companyInfo => {
-        let companyPositions = companyInfo.positions
-        return companyPositions.map((companyPosition: IntershipPositionDtoType) => companyPosition.id)
-    })
-    .then((companyPositionsIds) => {
-        let companyApplications: Array<ApplicationType> = []
-        Promise.all(companyPositionsIds.map((companyPositionId: string) => {
-            return applicationServiceAPI.getAllApplicationsByPositionId(companyPositionId)
-            .then(data => companyApplications = [...companyApplications, ...data])
-        }))
-        .then(() => {
-            connectApplicationAndStudent(companyApplications)
-            .then(applicationsWithStudentData => {
-                console.log(applicationsWithStudentData)
-                dispatch(setApplicationsWithStudentInfo(applicationsWithStudentData))
-                dispatch(setAreApplicationsFetching(false))
-            })
-        })
 
+    getCompanyApplicationsWithStudentInfoByCompanyId(companyId)
+        .then(applicationsWithStudentData => {
+            dispatch(setApplicationsWithStudentInfo(applicationsWithStudentData))
+            dispatch(setAreApplicationsFetching(false))
+        })
+}
+
+export const getCuratorCompaniesApplications = () => (dispatch: any, getState: GetStateType) => {
+    const curatorCompaniesIds = getState().auth.additionalCuratorInfo.companies.map(company => company.id)
+    let curatorCompaniesApplications: Array<ApplicationTypeWithStudentInfo> = []
+    dispatch(setAreApplicationsFetching(true))
+    
+    Promise.all(curatorCompaniesIds.map(curatorCompaniesId => {
+        return getCompanyApplicationsWithStudentInfoByCompanyId(curatorCompaniesId)
+            .then(applicationsWithStudentData => {
+                curatorCompaniesApplications = [...curatorCompaniesApplications, ...applicationsWithStudentData]
+            })
+    }))
+    .then(() => {
+        dispatch(setApplicationsWithStudentInfo(curatorCompaniesApplications))
+        dispatch(setAreApplicationsFetching(false))
     })
 }
 
-export const getStudentCompanyApplications = (studentId: string) => (dispatch: any, getState: any) => {
+export const getStudentCompanyApplications = (studentId: string) => (dispatch: any, getState: GetStateType) => {
     const companyId = getState().auth.user.companyId
     companyServiceAPI.getPositionsByCompanyId(companyId)
         .then(companyPositions => {
@@ -131,7 +163,7 @@ export const getStudentCompanyApplications = (studentId: string) => (dispatch: a
         })
 }
 
-export const updatePriorities = (positionId: string, applicationIds: Array<string>) => (dispatch: any, getState: any) => {
+export const updatePriorities = (positionId: string, applicationIds: Array<string>) => (dispatch: any) => {
     let positionApplicationsPriorities: Array<ApplicationPriorityType> = []
     positionApplicationsPriorities = applicationIds.map((id, index) => {
         return {

@@ -14,7 +14,7 @@ import EditableInformationBlock from '../../components/information/EditableInfor
 import CompanyInfoForProfile from './ProfileForCompany/CompanyInfoForProfile';
 import { getUpdateCommonProfileInfoForm } from './EditForms/UpdateCommonProfileInfoForm';
 import AdditionalStudentProfileInfo from './ProfileForStudents/AdditionalStudentProfileInfo';
-
+import AdditionalCuratorProfileInfo from './ProfileForCurator/AdditionalCuratorProfileInfo';
 
 const ProfilePage: React.FC = () => {
     const userRole = useSelector(selectUserRole)
@@ -46,6 +46,7 @@ const ProfilePage: React.FC = () => {
 
                     {userRole === 'COMPANY' && <CompanyInfoForProfile/>}
                     {userRole === 'STUDENT' && <AdditionalStudentProfileInfo/>}
+                    {userRole === 'CURATOR' && <AdditionalCuratorProfileInfo/>}
                 </Card>
             </Layout>
         </>

@@ -108,7 +108,7 @@ export const applicationServiceAPI = {
     addResume(resume: string) {
         return instanceWithAuth.post(`students/resume`, resume)
     },
-    getStudentsByCompanyId(companyId: string) {
+    getStudentsByCompanyId(companyId: string | null) {
         return instanceWithAuth.get(`students/byCompany/${companyId}`)
             .then(response => {
                 if(response.status === ResultCodesEnum.OK) {

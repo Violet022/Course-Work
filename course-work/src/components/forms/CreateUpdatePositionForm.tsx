@@ -1,51 +1,47 @@
-import { Button, Col, Form, Input, Row, Select} from 'antd';
+import { Button, Col, Form, Input, Row} from 'antd';
 import React, { useContext } from 'react';
-import { useSelector } from 'react-redux';
 import TextArea from 'antd/es/input/TextArea';
-import { getStacksLanguagesAndTechnologies } from '../../store/stack/StackReducer';
-import { 
-    selectAllLanguages,
-    selectAllStacks, 
-    selectAllTechnologies, 
-    selectIsSLTFetching } from '../../store/stack/StackSelectors';
-import { convertSLTArrayToSelectOptionsArray } from '../../utils/functions/converters';
-import { useAppDispatch } from '../../hooks/hooks';
+import { useAppDispatch, useRole } from '../../hooks/hooks';
 import { CreateUpdatePositionType } from '../../utils/types/types';
 import { checkIfUndefined } from '../../utils/functions/checkers';
 import { VisibilityContext } from '../contexts/VisibilityContext';
 import { setUpdatedPositionInfo, updatePositionInfo } from '../../store/position/PositionReducer';
 import CancelEditButton from '../information/EditableInformationBlock/EditFormButtons/CancelEditButton';
+import { useParams } from 'react-router-dom';
+import SelectWithCuratorCompanies from './formItems/WithSelects/SelectWithCuratorCompanies';
+import { isCurator } from '../../utils/functions/conditions';
+import StackSelectItem from './formItems/WithSelects/StackSelect/StackSelectItem';
+import LanguageSelectItem from './formItems/WithSelects/LanguageSelect/LanguageSelectItem';
+import TechnologyMultipleSelectItem from './formItems/WithSelects/TechnologyMultipleSelectItem';
 
 type PropsType = {
     initialValues:  CreateUpdatePositionType,
     onChangeValues: (position : CreateUpdatePositionType) => void,
-    onSubmit: () => void 
+    onSubmit: (companyId ?: string | null) => void 
 }
 
 const CreateUpdatePositionForm: React.FC<PropsType> = (props) => {
+    const userRole = useRole()
+    const params = useParams()
     const visibilityContext = useContext(VisibilityContext)
     const [submittable, setSubmittable] = React.useState(false);
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
-    const isSLTFetching = useSelector(selectIsSLTFetching)
-    const stacks = useSelector(selectAllStacks)
-    const languages = useSelector(selectAllLanguages)
-    const technologies = useSelector(selectAllTechnologies)
     
     const dispatch = useAppDispatch()
     
     const positionData = props.initialValues
-    
-    React.useEffect(() => {
-        dispatch(getStacksLanguagesAndTechnologies())
-    }, [])
 
     const onReset = () => {
         form.resetFields();
     };
     const onSubmit = () => {
-        visibilityContext.toggleSwitcher()
-        dispatch(props.onSubmit())
+        visibilityContext.toggleVisibilitySwitcher()
+        if(isCurator(userRole)) {
+            dispatch(props.onSubmit(params.id))
+        }
+        else
+            dispatch(props.onSubmit())
         form.resetFields();
     }
     React.useEffect(() => {
@@ -60,7 +56,13 @@ const CreateUpdatePositionForm: React.FC<PropsType> = (props) => {
                 if (!!values.languageId) {
                     languageId = values.languageId === -1 ? null : values.languageId
                 }
+                let companyId = null
+                if(isCurator(userRole) && params.id === undefined && !!values.companyId)
+                    companyId = values.companyId
+                if(isCurator(userRole) && params.id !== undefined)
+                    companyId = params.id
                 dispatch(props.onChangeValues({
+                    companyId : companyId,
                     description: checkIfUndefined(values.description),
                     languageId: languageId,
                     numberOfPlaces: !!values.numberOfPlaces ? values.numberOfPlaces : null,
@@ -75,104 +77,75 @@ const CreateUpdatePositionForm: React.FC<PropsType> = (props) => {
 
     return (
         <>
-            { isSLTFetching
-            ? 
-                null
-            :
-                <Form form={form} 
-                    name="validateOnly" 
-                    layout="vertical" 
-                    autoComplete="off"
-                    style={{maxWidth: 900}}
+            <Form form={form} 
+                name="validateOnly" 
+                layout="vertical" 
+                autoComplete="off"
+                style={{maxWidth: 900}}
+            >
+                <Form.Item name="title" label="Название" 
+                        rules={[{ required: true, message: 'Введите название позиции' }]}
+                        initialValue={positionData.title}
                 >
-                    <Form.Item name="title" label="Название" 
-                            rules={[{ required: true, message: 'Введите название позиции' }]}
-                            initialValue={positionData.title}
-                    >
-                        <Input placeholder="Введите название позиции"/>
-                    </Form.Item>
-                    <Form.Item name="description" label="Описание" 
-                            initialValue={positionData.description}
-                    >
-                        <TextArea placeholder="Введите описание" autoSize allowClear/>
-                    </Form.Item>
-                    <Row justify="space-between">
-                        <Col style={{width: "49%"}}>
-                            <Form.Item name="numberOfPlaces" label="Количество мест"
-                                rules={[{ pattern: new RegExp('(^0$|(^[1-9]{1,2}$))'), 
-                                            message: 'Введите корректное значение'}
-                                ]}
-                                initialValue={positionData.numberOfPlaces}
-                            >
-                                <Input placeholder="Введите количество мест"/>
-                            </Form.Item>
-                        </Col>
-                        <Col style={{width: "49%"}}>
-                            <Form.Item name="salaryRange" label="Заработная плата"
-                                rules={[{ pattern: new RegExp('(^0$|(^[1-9]([0-9]{1,4})$))'), 
+                    <Input placeholder="Введите название позиции"/>
+                </Form.Item>
+                { (isCurator(userRole) && params.id === undefined) && <SelectWithCuratorCompanies/> }
+                <Form.Item name="description" label="Описание" 
+                        initialValue={positionData.description}
+                >
+                    <TextArea placeholder="Введите описание" autoSize allowClear/>
+                </Form.Item>
+                <Row justify="space-between">
+                    <Col style={{width: "49%"}}>
+                        <Form.Item name="numberOfPlaces" label="Количество мест"
+                            rules={[{ pattern: new RegExp('(^0$|(^[1-9]{1,2}$))'), 
                                         message: 'Введите корректное значение'}
-                                ]}
-                                initialValue={positionData.salaryRange}
-                            >
-                                <Input placeholder="Введите значение"/>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Row justify="space-between">
-                        <Col style={{width: "49%"}}>
-                            <Form.Item name="stackId" label="Стек"
-                                    rules={[{ required: true, message: 'Выберите стек позиции' }]}
-                                    initialValue={positionData.stackId}
-                            >
-                                <Select
-                                    placeholder="Выберите стек позиции"
-                                    loading={isSLTFetching}
-                                    options={convertSLTArrayToSelectOptionsArray(stacks)}
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col style={{width: "49%"}}>
-                            <Form.Item name="languageId" label="Основной используемый язык"
-                                    initialValue={positionData.languageId}
-                            >
-                                <Select
-                                    placeholder="Выберите основной используемый язык"
-                                    loading={isSLTFetching}
-                                    options={[{value: -1, label: 'не указано'}, ...convertSLTArrayToSelectOptionsArray(languages)]}
-                                />
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Form.Item name="technologiesIds" label="Используемые технологии"
-                            initialValue={[...positionData.technologiesIds]}
-                    >
-                        <Select
-                            placeholder="Выберите используемые технологии"
-                            loading={isSLTFetching}
-                            mode="multiple"
-                            allowClear
-                            options={convertSLTArrayToSelectOptionsArray(technologies)}
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" disabled={!submittable} style={{marginRight: 15}}
-                                onClick={onSubmit}>
-                            {
-                                (props.initialValues.title === '' || props.initialValues.title === null)
-                                ? 'Создать' 
-                                : 'Сохранить'
-                            }
-                        </Button>
+                            ]}
+                            initialValue={positionData.numberOfPlaces}
+                        >
+                            <Input placeholder="Введите количество мест"/>
+                        </Form.Item>
+                    </Col>
+                    <Col style={{width: "49%"}}>
+                        <Form.Item name="salaryRange" label="Заработная плата"
+                            rules={[{ pattern: new RegExp('(^0$|(^[1-9]([0-9]{1,4})$))'), 
+                                    message: 'Введите корректное значение'}
+                            ]}
+                            initialValue={positionData.salaryRange}
+                        >
+                            <Input placeholder="Введите значение"/>
+                        </Form.Item>
+                    </Col>
+                </Row>
+                <Row justify="space-between">
+                    <Col style={{width: "49%"}}>
+                        <StackSelectItem initialValue={positionData.stackId}/>
+                    </Col>
+                    <Col style={{width: "49%"}}>
+                        <LanguageSelectItem initialValue={positionData.languageId}/>
+                    </Col>
+                </Row>
+                <TechnologyMultipleSelectItem formItemName='technologiesIds' formItemLabel='Используемые технологии' 
+                    initialValues={[...positionData.technologiesIds]} placeholder='Выберите используемые технологии'
+                />
+                <Form.Item>
+                    <Button type="primary" htmlType="submit" disabled={!submittable} style={{marginRight: 15}}
+                            onClick={onSubmit}>
                         {
                             (props.initialValues.title === '' || props.initialValues.title === null)
-                            ?   <Button htmlType="button" onClick={onReset}>
-                                    Очистить поля формы
-                                </Button>
-                            :   <CancelEditButton/>
+                            ? 'Создать' 
+                            : 'Сохранить'
                         }
-                    </Form.Item>
-                </Form>
-            }
+                    </Button>
+                    {
+                        (props.initialValues.title === '' || props.initialValues.title === null)
+                        ?   <Button htmlType="button" onClick={onReset}>
+                                Очистить поля формы
+                            </Button>
+                        :   <CancelEditButton/>
+                    }
+                </Form.Item>
+            </Form>
         </>
     )
 }

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ResultCodesEnum } from "./api";
+import { CuratorDtoType } from "../utils/types/types";
 
 const instanceWithAuth = axios.create({
     baseURL: 'http://localhost:8080/curator-service/api/',
@@ -26,6 +27,9 @@ export const curatorServiceAPI = {
     addACompanyToCurator(curatorId: string, companyId: string) {
         return instanceWithAuth.post(`curators/${curatorId}/companies/${companyId}`)
     },
+    removeACompanyFromCurator(curatorId: string, companyId: string) {
+        return instanceWithAuth.delete(`curators/${curatorId}/companies/${companyId}`)
+    },
     getCuratorById(curatorId: string) {
         return instanceWithAuth.get(`curators/${curatorId}`)
             .then(response => {
@@ -36,5 +40,16 @@ export const curatorServiceAPI = {
     },
     deleteCuratorById(curatorId: string) {
         return instanceWithAuth.delete(`curators/${curatorId}`)
+    },
+    getCuratorsByCompanyId(companyId: string) {
+        return instanceWithAuth.get(`curators/companies/${companyId}`)
+            .then(response => {
+                if(response.status === ResultCodesEnum.OK) {
+                    return response.data
+                }
+            })
+            .then((curators: Array<CuratorDtoType>) => {
+                return curators.map((curator: CuratorDtoType) => curator.id)
+            })
     }
 }

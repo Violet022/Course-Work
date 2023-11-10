@@ -1,5 +1,6 @@
 import type { CreateUpdateGroupType} from '../../utils/types/types';
 import { userServiceAPI } from '../../api/user-service-api';
+import { GetStateType } from '../store';
 
 let initialState = {
     newGroup: {
@@ -38,7 +39,7 @@ export const clearNewGroup = () => {
 }
 
 // THUNKS
-export const createNewGroup = () => (dispatch: any, getState: any) => {
+export const createNewGroup = () => (dispatch: any, getState: GetStateType) => {
     const newGroup = getState().groups.newGroup
     userServiceAPI.createGroup(newGroup.groupNumber)
         .then(() => dispatch(clearNewGroup()))
