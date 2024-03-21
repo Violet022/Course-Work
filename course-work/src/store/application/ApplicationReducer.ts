@@ -120,9 +120,21 @@ export const getApplicationAndStudentInfo = (applicationId: string) => (dispatch
 
 export const acceptOrRejectOffer = (action: 'OFFER_ACCEPTED' | 'OFFER_REJECTED') => (dispatch: any, getState: GetStateType) => {
     const applicationId = getState().application.applicationInfo.id
+    const studentId = getState().auth.user.userId
     applicationServiceAPI.addStatusToApplication(applicationId, action)
         .then(updatedApplication => {
             dispatch(setApplicationInfo(updatedApplication))
+            if(action === 'OFFER_ACCEPTED') {
+                applicationServiceAPI.getStudentProfileById(studentId)
+                .then(studentProfile => {
+                    let applicationsWAITING_FOR_STUDENT_ANSWER = studentProfile.applications.filter((application: ApplicationType) =>
+                        application.statusHistory[application.statusHistory.length - 1].status === 'Ожидается ответ от студента'
+                    )
+                    Promise.all(applicationsWAITING_FOR_STUDENT_ANSWER.map((app: ApplicationType) => {
+                        return applicationServiceAPI.addStatusToApplication(app.id, 'OFFER_REJECTED')
+                    }))
+                })
+            }
         })
 }
 

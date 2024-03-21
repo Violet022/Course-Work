@@ -4,8 +4,8 @@ import { VisibilityContext } from '../../../components/contexts/VisibilityContex
 import { useAppDispatch } from '../../../hooks/hooks';
 import { checkIfUndefined } from '../../../utils/functions/checkers';
 import { createNewUser, setNewUser } from '../../../store/administration/AdministrationReducer';
-import AllCompaniesSelect from '../../../components/dataProviders/Selects/AllCompaniesSelect';
-import AllGroupsSelect from '../../../components/dataProviders/Selects/AllGroupsSelect';
+import AllGroupsSelectItem from '../../../components/forms/formItems/WithSelects/AllGroupsSelectItem';
+import AllCompaniesSelectItem from '../../../components/forms/formItems/WithSelects/AllCompaniesSelectItem';
 
 type PropsType = {
     userRole: 'STUDENT' | 'SCHOOL' | 'COMPANY' | 'CURATOR'
@@ -22,7 +22,7 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
         form.resetFields();
     };
     const onSubmit = () => {
-        visibilityContext.toggleVisibilitySwitcher()
+        // visibilityContext.toggleVisibilitySwitcher()
         dispatch(createNewUser())
         form.resetFields();
     }
@@ -59,7 +59,7 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
                     <Col span={8}>
                         <Form.Item name="lastName" label="Фамилия" 
                                 rules={[{ required: true, message: 'Введите фамилию' }]}
-                                initialValue={''}
+                                initialValue={null}
                         >
                             <Input placeholder="Введите фамилию"/>
                         </Form.Item>
@@ -80,20 +80,10 @@ const CreateUserForm: React.FC<PropsType> = (props) => {
                 </Row>
                 <Row gutter={[16, 16]}>
                     <Col span={12}>
-                        <Form.Item name="companyId" label="Компания"
-                                className={`form-item-${props.userRole !== 'COMPANY' ? 'disabled' : 'not-disables'}`}
-                                rules={[{ required: props.userRole === 'COMPANY', message: 'Выберите компанию' }]}
-                        >
-                            <AllCompaniesSelect isDisabled={props.userRole !== 'COMPANY'}/>
-                        </Form.Item>
+                        <AllCompaniesSelectItem userRole={props.userRole}/>
                     </Col>
                     <Col span={12}>
-                        <Form.Item name="stGroupNumber" label="Группа"
-                                className={`form-item-${props.userRole !== 'STUDENT' ? 'disabled' : 'not-disables'}`}
-                                rules={[{ required: props.userRole === 'STUDENT', message: 'Выберите группу' }]}
-                        >
-                            <AllGroupsSelect isDisabled={props.userRole !== 'STUDENT'}/>
-                        </Form.Item>
+                        <AllGroupsSelectItem userRole={props.userRole}/>
                     </Col>
                 </Row>
                 <Row gutter={[16, 16]}>

@@ -15,7 +15,7 @@ export const StatusTag: React.FC<PropsType> = (props) => {
     let color = 'geekblue'
     if(lastApplicationStatus.status.includes('Ожидается')) color = 'gold'
     if(lastApplicationStatus.status.includes('Предложен') || lastApplicationStatus.status.includes('Принят')) color = 'green'
-    if(lastApplicationStatus.status.includes('отказано') || lastApplicationStatus.status.includes('не принят')) color = 'red'
+    if(lastApplicationStatus.status.includes('отказано') || lastApplicationStatus.status.includes('Не принят')) color = 'red'
 
     return (
         <>

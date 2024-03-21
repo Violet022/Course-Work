@@ -1,4 +1,4 @@
-import React, { Key, useContext,useState } from "react";
+import React, { Key, useContext,useEffect,useState } from "react";
 import { Space, Spin, Table} from "antd";
 import { useNavigate } from "react-router-dom";
 import { ColumnsType} from "antd/es/table";
@@ -16,7 +16,6 @@ const StudentsWithApplicationsTable: React.FC = () => {
     const studentsWithApplications = dataTableContext.dataTable
 
     const [isTableOpened, setIsTableOpened] = useState(false)
-    const [totalItems, setTotalItems] = useState(dataTableContext.dataTable.length)
     const navigate = useNavigate()
 
     const columnsStWithApp: ColumnsType<StudentWithApplicationsType> = [
@@ -46,6 +45,10 @@ const StudentsWithApplicationsTable: React.FC = () => {
                 return innerText
             }
         },
+        { title: 'Компания', dataIndex: 'companyName', key: 'companyName',
+          filteredValue: filteredInfo.companyName || null,
+          onFilter: (value: boolean | Key, record) => record.companyName.includes(String(value))
+        },
         { title: 'Позиция', dataIndex: 'position', key: 'position',
           filteredValue: filteredInfo.position || null,
           onFilter: (value: boolean | Key, record) => record.position.includes(String(value)) 
@@ -54,9 +57,9 @@ const StudentsWithApplicationsTable: React.FC = () => {
           filteredValue: filteredInfo.stack || null,
           onFilter: (value: boolean | Key, record) => record.stack.includes(String(value)) 
         },
-        { title: 'Компания', dataIndex: 'companyName', key: 'companyName',
-          filteredValue: filteredInfo.companyName || null,
-          onFilter: (value: boolean | Key, record) => record.companyName.includes(String(value))
+        { title: 'Год', dataIndex: 'creationYear', key: 'creationYear',
+          filteredValue: filteredInfo.creationYear || null,
+          onFilter: (value: boolean | Key, record) => record.creationYear.includes(String(value)) 
         },
         { title: 'Статус заявки', dataIndex: 'statusHistory', key: 'statusHistory',
             render: (applicationStatuses) => {
@@ -95,7 +98,6 @@ const StudentsWithApplicationsTable: React.FC = () => {
                             showSizeChanger: true,
                             defaultPageSize: 10,
                             defaultCurrent: 1,
-                            total: totalItems,
                             showTotal: (total, range) => `${range[0]}-${range[1]} из ${total}`,
                         }}
                         tableLayout="auto"

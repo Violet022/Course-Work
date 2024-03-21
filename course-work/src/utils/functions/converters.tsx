@@ -24,15 +24,14 @@ export const convertSLTArrayToSelectOptionsArray = (stackOrElements: Array<Stack
 export const convertStatusHistoryToTimelineItems = (statusHistory: Array<StatusHistoryType>, interviews: Array<InterviewType>) => {
     let timelineItems: Array<TimelineItemType> = []
     if (statusHistory !== undefined && interviews !== undefined) {
-        let interview: InterviewType
-        if (interviews.length !== 0)
-            interview = interviews[interviews.length - 1]
+        let interviewCounter = interviews.length
 
         timelineItems = statusHistory.map((statusHistoryItem: StatusHistoryType) => {
             let color = ApplicationStatusToColourEnum[statusHistoryItem.status as ApplicationStatusToColourEnumKeys]
             let label = statusHistoryItem.status.includes('Ожидается') ? '' : convertShortDate(statusHistoryItem.addedAt)
 
             let children: string | ReactNode = ''
+            let interview: InterviewType = interviews[interviews.length - interviewCounter]
             switch(statusHistoryItem.status) {
                 case 'Назначено собеседование' : {
                     children = (
@@ -46,6 +45,7 @@ export const convertStatusHistoryToTimelineItems = (statusHistory: Array<StatusH
                 }
                 case 'Ожидается ответ от компании после прохождения собеседования' : {
                     children = `Ожидается ответ от компании после прохождения собеседования ${convertISODateToLocal(interview.date)}`
+                    interviewCounter--
                     break;
                 }
                 default:

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
 import { BrowserRouter } from 'react-router-dom';
-import Navbar from '../components/navigation/NavBar/Navbar';
-import Routes from '../components/routing/Routes';
+import Navbar from './NavBar/Navbar';
+import Routes from './Routes';
 
 const MainLayout: React.FC = () => {
   return (

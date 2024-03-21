@@ -304,7 +304,8 @@ export type StudentWithApplicationsType = {
     priority: string | number,
     companyName: string,
     statusHistory: Array<StatusHistoryType>,
-    stack: string
+    stack: string,
+    creationYear: string
 }
 
 export type columnsArraysType = {
@@ -327,6 +328,7 @@ export type studentsWithApplicationsFilterDataType = {
     companyName: string,
     statusHistory: string,
     stack: string,
+    creationYear: string
 }
 
 export type studentWithApplicationsKeysType = keyof studentsWithApplicationsFilterDataType

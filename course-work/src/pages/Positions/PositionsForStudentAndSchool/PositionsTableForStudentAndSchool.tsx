@@ -46,8 +46,8 @@ const PositionsTableForSchoolAndStudent: React.FC = () => {
         { title: 'Название компании', dataIndex: 'companyName', key: 'companyName' },
         { title: 'Количество мест', dataIndex: 'numberOfPlaces', key: 'numberOfPlaces',
             render: (numberOfPlaces) => {
-                if (numberOfPlaces === null)
-                    numberOfPlaces = "не указанo"
+                if (numberOfPlaces === null || numberOfPlaces === 0)
+                    return 'не указано'
                 return numberOfPlaces
             }
         }, 

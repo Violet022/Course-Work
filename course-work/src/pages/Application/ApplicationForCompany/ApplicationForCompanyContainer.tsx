@@ -23,7 +23,7 @@ const ApplicationForCompanyContainer: React.FC<PropsType> = (props) => {
                                             colWidths={[3, 21]}/>
             <ApplicationStatusTimeline applicationInfo={props.applicationInfo}/>
             {
-                (props.lastStatus !== null && props.lastStatus === 'Подана заявка') &&
+                (props.lastStatus !== null && !props.lastStatus.includes('оффер') && !props.lastStatus.includes('от студента')) &&
                 <CreatingInterviewButton/>
             }
             {
@@ -34,5 +34,6 @@ const ApplicationForCompanyContainer: React.FC<PropsType> = (props) => {
         </>
     )
 }
+
 
 export default ApplicationForCompanyContainer;

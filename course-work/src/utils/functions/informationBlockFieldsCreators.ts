@@ -83,7 +83,7 @@ export const createPositionInfoFieldsArray = (positionInfo: IntershipPositionDto
             {title: 'Стек', text: positionInfo.stack },
             {title: 'Основной используемый язык', text: positionInfo.language },
             {title: 'Используемые технологии', text: positionInfo.technologies.join(', ') },
-            {title: 'Количество мест', text: String(positionInfo.numberOfPlaces) },
+            {title: 'Количество мест', text: positionInfo.numberOfPlaces === 0 ? 'не указано' : String(positionInfo.numberOfPlaces) },
         ]
     }
     return companyInfoFieldsArray

@@ -85,7 +85,8 @@ export const getStudentsWithApplications = async () => {
                                     priority: application.priority === 0 ? Number.MAX_SAFE_INTEGER : application.priority,
                                     companyName: application.companyName,
                                     statusHistory: application.statusHistory,
-                                    stack: data.stack
+                                    stack: data.stack,
+                                    creationYear: application.statusHistory[0].addedAt.split('-')[0]
                                 })
                             })
                         })
@@ -118,7 +119,8 @@ export const getStudentArrays = () => (dispatch: any) => {
                                     priority: application.priority === 0 ? Number.MAX_SAFE_INTEGER : application.priority,
                                     companyName: application.companyName,
                                     statusHistory: application.statusHistory,
-                                    stack: data.stack
+                                    stack: data.stack,
+                                    creationYear: application.statusHistory[0].addedAt.split('-')[0]
                                 })
                             })
                         })
@@ -169,7 +171,8 @@ export const getCuratorCompaniesStudents = () => (dispatch: any, getState: GetSt
                                         priority: application.priority === 0 ? Number.MAX_SAFE_INTEGER : application.priority,
                                         companyName: application.companyName,
                                         statusHistory: application.statusHistory,
-                                        stack: position.stack
+                                        stack: position.stack,
+                                        creationYear: application.statusHistory[0].addedAt.split('-')[0]
                                     })
                                 })
                             })

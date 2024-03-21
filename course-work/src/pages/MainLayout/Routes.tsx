@@ -3,19 +3,19 @@ import { useSelector } from 'react-redux';
 import {Navigate, Route, Routes } from 'react-router-dom';
 import { selectIsAuth } from '../../store/authentication/AuthSelectors';
 
-import MainPageRedirect from '../../pages/Main/MainPageRedirect';
-import LoginPage from '../../pages/Login/LoginPage';
-import CompaniesPage from '../../pages/Companies/CompaniesPage';
-import CompanyPage from '../../pages/Company/CompanyPage';
-import LogoutPage from '../../pages/Logout/LogoutPage';
-import PositionsPage from '../../pages/Positions/PositionsPage';
-import ProfilePage from '../../pages/Profile/ProfilePage';
-import PositionPage from '../../pages/Position/PositionPage';
-import ApplicationsPage from '../../pages/Applications/ApplicationsPage';
-import ApplicationPage from '../../pages/Application/ApplicationPage';
-import StudentsPage from '../../pages/Students/StudentsPage';
-import StudentPage from '../../pages/Student/StudentPage';
-import AdministrationPage from '../../pages/Administration/AdministrationPage';
+import MainPageRedirect from '../Main/MainPageRedirect';
+import LoginPage from '../Login/LoginPage';
+import CompaniesPage from '../Companies/CompaniesPage';
+import CompanyPage from '../Company/CompanyPage';
+import LogoutPage from '../Logout/LogoutPage';
+import PositionsPage from '../Positions/PositionsPage';
+import ProfilePage from '../Profile/ProfilePage';
+import PositionPage from '../Position/PositionPage';
+import ApplicationsPage from '../Applications/ApplicationsPage';
+import ApplicationPage from '../Application/ApplicationPage';
+import StudentsPage from '../Students/StudentsPage';
+import StudentPage from '../Student/StudentPage';
+import AdministrationPage from '../Administration/AdministrationPage';
 
 const RoutesList: React.FC = () => {
   const isAuth = useSelector(selectIsAuth)

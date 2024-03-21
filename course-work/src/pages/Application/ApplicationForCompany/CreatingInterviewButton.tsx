@@ -12,8 +12,8 @@ const CreatingInterviewButton: React.FC = () => {
     const toggleButton = () => setIsModalOpen(prev => !prev)
 
     return (
-        <>
-            <Space wrap style={{ paddingTop: 0}}>
+        <div>
+            <Space wrap style={{ paddingTop: 0, paddingBottom: 12}}>
                  <Button type="primary" onClick={() => setIsModalOpen(true)}>Назначить собеседование</Button>
             </Space>
             <VisibilityContext.Provider value={{
@@ -37,7 +37,7 @@ const CreatingInterviewButton: React.FC = () => {
                 </Modal>
             </VisibilityContext.Provider>
             
-        </>
+        </div>
     )
 }
 
